@@ -1,0 +1,2 @@
+# entrenamiento.diabetes
+Proyecto final
