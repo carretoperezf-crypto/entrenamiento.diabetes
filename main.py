@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import (accuracy_score, 
                              classification_report, 
                              confusion_matrix)
+from xgboost import plot_importance
+import matplotlib.pyplot as plt
 
 ruta="data/Diabetes_Mexico_DATASET.xlsx"
 
@@ -83,9 +85,9 @@ print(df_limpio.shape)
 df_limpio["Peso"]=df_limpio["Peso"].fillna(df_limpio["Peso"].median())
 df_limpio["Estatura (cm)"]=df_limpio["Estatura (cm)"].fillna(df_limpio["Estatura (cm)"].median())
 df_limpio["IMC"]=df_limpio["IMC"].fillna(df_limpio["IMC"].median())
-df_limpio["Insulina"]=df_limpio["Insulina"].fillna(df_limpio["Insulina"].median())
-df_limpio["Trigliceridos"]=df_limpio["Trigliceridos"].fillna(df_limpio["Trigliceridos"].median())
-df_limpio["HbA1c"]=df_limpio["HbA1c"].fillna(df_limpio["HbA1c"].median())
+df_limpio["insulina"]=df_limpio["insulina"].fillna(df_limpio["insulina"].median())
+#df_limpio["Trigliceridos"]=df_limpio["Trigliceridos"].fillna(df_limpio["Trigliceridos"].median())
+df_limpio["hb1ac"]=df_limpio["hb1ac"].fillna(df_limpio["hb1ac"].median())
 
 plt.boxplot(df_limpio["IMC"])
 plt.title("Boxplot de IMC")
@@ -93,6 +95,30 @@ plt.show()
 
 X=df_limpio.drop("riesgo_diabetes_cat", axis=1)
 Y=df_limpio["riesgo_diabetes_cat"]
+print(X.dtypes)
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
+
+modelo = XGBClassifier(
+    random_state=42,
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5,
+    objective="binary:logistic",
+    eval_metric="logloss"
+)
+
+modelo.fit(X_train,Y_train)
+
+y_pred = modelo.predict(X_test)
+print("Accuracy:")  
+print(accuracy_score(Y_test, y_pred))
+
+print(confusion_matrix(Y_test, y_pred))
+print(classification_report(Y_test, y_pred))
+
+plot_importance(modelo)
+plt.show()
+
+print(df["riesgo_diabetes_cat"].value_counts())
