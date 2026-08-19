@@ -34,4 +34,3 @@ print("\n==== DISTRIBUCION DE LA VARIABLE OBJETIVO =====")
 print(df_limpio["riesgo_diabetes_cat"].value_counts().sort_index())
 
 
-

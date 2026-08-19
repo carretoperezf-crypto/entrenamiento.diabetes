@@ -19,12 +19,14 @@ modelo=XGBClassifier(
     n_estimators=100,
     learning_rate=0.1,
     max_depth=5,
-    objective="multi:softmax",
+    objective="multi:softprob",
     eval_metric="mlogloss",
     num_class=3
 )   
 
+print("\n=== ENTRENANDO XGBOOST ===")
 modelo.fit(X_train_smote,Y_train_smote)
+print("Entrenamiento terminado correctamente")
 
 y_pred=modelo.predict(X_test)
 
@@ -44,5 +46,4 @@ disp.plot()
 
 plt.title("Matriz de Confusión")
 plt.show()
-
 
