@@ -93,32 +93,4 @@ plt.boxplot(df_limpio["IMC"])
 plt.title("Boxplot de IMC")
 plt.show()
 
-X=df_limpio.drop("riesgo_diabetes_cat", axis=1)
-Y=df_limpio["riesgo_diabetes_cat"]
-print(X.dtypes)
 
-
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
-
-modelo = XGBClassifier(
-    random_state=42,
-    n_estimators=100,
-    learning_rate=0.1,
-    max_depth=5,
-    objective="binary:logistic",
-    eval_metric="logloss"
-)
-
-modelo.fit(X_train,Y_train)
-
-y_pred = modelo.predict(X_test)
-print("Accuracy:")  
-print(accuracy_score(Y_test, y_pred))
-
-print(confusion_matrix(Y_test, y_pred))
-print(classification_report(Y_test, y_pred))
-
-plot_importance(modelo)
-plt.show()
-
-print(df["riesgo_diabetes_cat"].value_counts())
