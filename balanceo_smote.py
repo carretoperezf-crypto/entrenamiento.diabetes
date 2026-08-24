@@ -1,45 +1,64 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import train_test_split
 
-ruta="data/Diabetes_Mexico_DATASET.xlsx"
+archivo = "data/Diabetes_Mexico_DATASET_codificado.xlsx"
 
-df_limpio=pd.read_excel(ruta)
-print("Dataset limpio cargado correctamente")
-print("Dimensiones: ", df_limpio.shape)
+df = pd.read_excel(archivo)
 
-df_limpio= pd.get_dummies(df_limpio, columns=["Ciudad"], dtype=int)
-print("\nCiudad convertida a variables numericas")
+print("Dataset codificado cargado correctamente")
+print("\nDistribución original:")
+print(df["riesgo_diabetes_cat"].value_counts())
+
+X = df.drop("riesgo_diabetes_cat", axis=1)
+Y = df["riesgo_diabetes_cat"]
 
 
-X=df_limpio.drop("riesgo_diabetes_cat", axis=1)
-Y=df_limpio["riesgo_diabetes_cat"]
-#X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X,
+    Y,
+    test_size=0.20,
+    random_state=42,
+    stratify=Y
+)
 
-print("\n ===DISTRIBUCION ORIGINAL===")
-print(Y.value_counts().sort_index())
 
-#print("\n ===DISTRIBUCION TRAIN===")
-#print(Y_train.value_counts().sort_index())
+print("\n=== DISTRIBUCIÓN ANTES DE SMOTE ===")
+print("TRAIN:")
+print(Y_train.value_counts())
 
-#print("\n ===DISTRIBUCION TEST===")
-#print(Y_test.value_counts().sort_index())
+print("\nTEST:")
+print(Y_test.value_counts())
 
-smote = SMOTE(random_state=42, k_neighbors=5)
-X_smote, Y_smote = smote.fit_resample(X, Y)
+smote = SMOTE(
+    random_state=42
+)
 
-print("\n ===DISTRIBUCION DESPUES DE SMOTE===")
-print(Y_smote.value_counts().sort_index())
+X_train_smote, Y_train_smote = smote.fit_resample(
+    X_train,
+    Y_train
+)
 
-#X_train_smote.to_csv("data/X_train_smote.csv", index=False)
-#Y_train_smote.to_csv("data/Y_train_smote.csv", index=False)
+print("\n=== DISTRIBUCIÓN DESPUÉS DE SMOTE ===")
+print(Y_train_smote.value_counts())
 
-#X_test.to_csv("data/X_test.csv", index=False)
-#Y_test.to_csv("data/Y_test.csv", index=False)
+print("\nTamaño original de TRAIN:")
+print(X_train.shape)
 
-#print("\n==== ARCHIVOS GUARDADOS CORRECTAMENTE =====")
-#print("X_train_smote.csv")
-#print("Y_train_smote.csv")
-#print("X_test.csv")
-#print("Y_test.csv")
- 
+print("\nTamaño de TRAIN después de SMOTE:")
+print(X_train_smote.shape)
+
+print("\n=== TIPOS DE DATOS ===")
+print(df.dtypes)
+
+
+df_train_smote = X_train_smote.copy()
+df_train_smote["riesgo_diabetes_cat"] = Y_train_smote
+df_train_smote.to_excel(
+    "data/Diabetes_Mexico_DATASET_SMOTE.xlsx",
+    index=False
+)
+
+print("SMOTE TERMINADO")
+print("Archivo guardado:")
+print("data/Diabetes_Mexico_DATASET_SMOTE.xlsx")

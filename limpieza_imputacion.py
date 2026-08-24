@@ -24,7 +24,7 @@ print ("Imputacion terminada correctamente")
 print("\n=== VALORES FALTANTES DESPUES DE LA IMPUTACION===\n")
 print(df_limpio.isnull().sum())
 
-salida="data/Diabetes_Mexico_DATASET.xlsx"
+salida="data/Diabetes_Mexico_DATASET_Imputado.xlsx"
 df_limpio.to_excel(salida, index=False)
 
 print("\n Dataset limpio guardado en: ")
