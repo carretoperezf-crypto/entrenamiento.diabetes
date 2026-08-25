@@ -12,6 +12,9 @@ print(df["riesgo_diabetes_cat"].value_counts())
 
 X = df.drop("riesgo_diabetes_cat", axis=1)
 Y = df["riesgo_diabetes_cat"]
+print("\n ===DATOS SEPARADOS=== ")
+print("X: ", X.shape)
+print("X: ", X.shape)
 
 
 X_train, X_test, Y_train, Y_test = train_test_split(
@@ -21,6 +24,13 @@ X_train, X_test, Y_train, Y_test = train_test_split(
     random_state=42,
     stratify=Y
 )
+
+print("DIVISION TRAIN / TEST")
+print("X_train: ", X_train.shape)
+print("Y_train: ", Y_train.shape)
+
+print("X_test: ", X_test.shape)
+print("Y_test: ", Y_test.shape)
 
 
 print("\n=== DISTRIBUCIÓN ANTES DE SMOTE ===")
@@ -50,6 +60,10 @@ print(X_train_smote.shape)
 
 print("\n=== TIPOS DE DATOS ===")
 print(df.dtypes)
+
+#GUARDAR TEST SIN SMOTE
+X_test.to_csv("data/X_test.csv", index=False)
+Y_test.to_csv("data/Y_test.csv", index=False)
 
 
 df_train_smote = X_train_smote.copy()

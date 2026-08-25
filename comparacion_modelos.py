@@ -1,8 +1,14 @@
 import pandas as pd
+import numpy as np  
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import Perceptron
 
+#RED NEURONAL
+from sklearn.neural_network import MLPClassifier
+
+#METRICAS 
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -13,16 +19,13 @@ from sklearn.metrics import (
 
 from xgboost import XGBClassifier
 
-
 # ==========================================
 # CARGAR DATOS
 # ==========================================
-
-X_train = pd.read_csv("data/X_train_smote.csv")
-Y_train = pd.read_csv("data/Y_train_smote.csv").squeeze()
-
-X_test = pd.read_csv("data/X_test.csv")
-Y_test = pd.read_csv("data/Y_test.csv").squeeze()
+X_train= pd.read_csv("data/X_train.csv")
+Y_train= pd.read_csv("data/Y_train.csv")
+X_test= pd.read_csv("data/X_test.csv")
+Y_test= pd.read_csv("data/Y_test.csv")
 
 
 print("=== DATOS CARGADOS ===")
@@ -33,9 +36,27 @@ print("Y_train:", Y_train.shape)
 print("X_test:", X_test.shape)
 print("Y_test:", Y_test.shape)
 
+#==========================================
+#PERCEPTRON
+#==========================================
+modelo_perceptron = Perceptron(
+    max_iter=1000,
+    eta0=0.01,
+    random_state=42
+)
+
+#==========================================
+#ARBOL DE DECISION
+#==========================================
+modelo_arbol = DecisionTreeClassifier(
+    max_depth=5,
+    random_state=42,
+    class_weight="balanced"
+)
+
 
 # ==========================================
-# MODELO 1: XGBOOST
+# XGBOOST
 # ==========================================
 
 modelo_xgb = XGBClassifier(
@@ -50,71 +71,62 @@ modelo_xgb = XGBClassifier(
 
 
 # ==========================================
-# MODELO 2: RANDOM FOREST
+# RANDOM FOREST
 # ==========================================
 
 modelo_rf = RandomForestClassifier(
     n_estimators=200,
+    max_depth=None,
     random_state=42,
     class_weight="balanced",
     n_jobs=-1
 )
 
-
 # ==========================================
-# MODELO 3: REGRESION LOGISTICA
+# RED NEURONAL 
 # ==========================================
-
-modelo_lr = LogisticRegression(
-    max_iter=2000,
-    class_weight="balanced",
+modelo_red_neuronal= MLPClassifier(
+    hidden_layer_sizes=(64,32),
+    activation="relu",
+    solver="adam",
+    learning_rate_init=0.001,
+    max_iter=500,
     random_state=42
 )
-
 
 # ==========================================
 # ENTRENAMIENTO
 # ==========================================
+print("\n=== ENTRENANDO PERCEPTRON ====")
+modelo_perceptron.fit(X_train,Y_train)
+print("Perceptron termiando")
+
+print("\n=== ENTRENANDO ARBOL DE DECISION ====")
+modelo_arbol.fit(X_train,Y_train)
+print("Arbol de decision termiando")
 
 print("\n=== ENTRENANDO XGBOOST ===")
-
-modelo_xgb.fit(
-    X_train,
-    Y_train
-)
-
+modelo_xgb.fit( X_train, Y_train)
 print("XGBoost terminado")
 
-
 print("\n=== ENTRENANDO RANDOM FOREST ===")
-
-modelo_rf.fit(
-    X_train,
-    Y_train
-)
-
+modelo_rf.fit(X_train,Y_train)
 print("Random Forest terminado")
 
-
-print("\n=== ENTRENANDO REGRESION LOGISTICA ===")
-
-modelo_lr.fit(
-    X_train,
-    Y_train
-)
-
-print("Regresión Logística terminada")
-
+print("\n=== ENTRENANDO RED NEURONAL ===")
+modelo_red_neuronal.fit(X_train,Y_train)
+print("Red Nueronal terminado")
 
 # ==========================================
 # PREDICCIONES
 # ==========================================
 
 pred_xgb = modelo_xgb.predict(X_test)
-
 pred_rf = modelo_rf.predict(X_test)
+pred_perceptron = modelo_perceptron.predict(X_test)
+pred_arbol = modelo_arbol.predict(X_test)
+pred_red_neuronal = modelo_red_neuronal.predict(X_test)
 
-pred_lr = modelo_lr.predict(X_test)
 
 
 # ==========================================
@@ -186,7 +198,111 @@ evaluar_modelo(
 )
 
 evaluar_modelo(
-    "REGRESION LOGISTICA",
+    "PERCEPTRON",
     Y_test,
-    pred_lr
+    pred_perceptron
+)
+
+evaluar_modelo(
+    "ARBOL DE DECISION",
+    Y_test,
+    pred_arbol
+)
+
+evaluar_modelo(
+    "RED NEURONAL - RELU + ADAM",
+    Y_test,
+    pred_arbol
+)
+
+# ==========================================
+# COMPARACIÓN FINAL
+# ==========================================
+
+resultados = []
+
+modelos = [
+    ("Perceptrón", pred_perceptron),
+    ("Árbol de Decisión", pred_arbol),
+    ("Random Forest", pred_rf),
+    ("XGBoost", pred_xgb),
+    ("Red Neuronal", pred_red_neuronal)
+]
+
+
+for nombre, predicciones in modelos:
+
+    resultados.append({
+
+        "Modelo": nombre,
+
+        "Accuracy": accuracy_score(
+            Y_test,
+            predicciones
+        ),
+
+        "Precision": precision_score(
+            Y_test,
+            predicciones,
+            average="macro",
+            zero_division=0
+        ),
+
+        "Recall": recall_score(
+            Y_test,
+            predicciones,
+            average="macro",
+            zero_division=0
+        ),
+
+        "F1": f1_score(
+            Y_test,
+            predicciones,
+            average="macro",
+            zero_division=0
+        )
+    })
+
+
+df_resultados = pd.DataFrame(
+    resultados
+)
+
+
+# ==========================================
+#  ORDENAR POR F1
+# ==========================================
+
+df_resultados = df_resultados.sort_values(
+    by="F1",
+    ascending=False
+)
+print("COMPARACIÓN FINAL DE MODELOS")
+print(
+    df_resultados.to_string(
+        index=False
+    )
+)
+
+
+# ==========================================
+# 13. GUARDAR RESULTADOS
+# ==========================================
+
+df_resultados.to_csv(
+    "data/comparacion_modelos_resultados.csv",
+    index=False
+)
+
+
+print("\n==========================================")
+print("COMPARACIÓN TERMINADA")
+print("==========================================")
+
+print(
+    "Resultados guardados en:"
+)
+
+print(
+    "data/comparacion_modelos_resultados.csv"
 )
