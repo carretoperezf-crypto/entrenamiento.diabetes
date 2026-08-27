@@ -40,7 +40,7 @@ print("Y_test:", Y_test.shape)
 #PERCEPTRON
 #==========================================
 modelo_perceptron = Perceptron(
-    max_iter=1000,
+    max_iter=500,
     eta0=0.01,
     random_state=42
 )
@@ -74,7 +74,7 @@ modelo_xgb = XGBClassifier(
 # ==========================================
 
 modelo_rf = RandomForestClassifier(
-    n_estimators=200,
+    n_estimators=100,
     max_depth=None,
     random_state=42,
     n_jobs=-1
@@ -89,7 +89,10 @@ modelo_red_neuronal= MLPClassifier(
     solver="adam",
     learning_rate_init=0.001,
     max_iter=500,
-    random_state=42
+    random_state=42,
+    early_stopping=True,
+    validation_fraction=0.15,
+    alpha=0.0001
 )
 
 # ==========================================
