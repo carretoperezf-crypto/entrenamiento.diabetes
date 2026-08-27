@@ -50,7 +50,7 @@ X_train_smote, Y_train_smote = smote.fit_resample(
 )
 
 print("\n=== DISTRIBUCIÓN DESPUÉS DE SMOTE ===")
-print(Y_train.value_counts())
+print(Y_train_smote.value_counts())
 
 print("\nTamaño original de TRAIN:")
 print(X_train.shape)
@@ -64,8 +64,8 @@ print(df.dtypes)
 #GUARDAR TEST SIN SMOTE
 X_test.to_csv("data/X_test.csv", index=False)
 Y_test.to_csv("data/Y_test.csv", index=False)
-X_train_smote.to_csv("data/X_train.csv", index=False)
-Y_train_smote.to_csv("data/Y_train.csv", index=False)
+X_train_smote.to_csv("data/X_train_SMOTE.csv", index=False)
+Y_train_smote.to_csv("data/Y_train_SMOTE.csv", index=False)
 
 
 df_train_smote = X_train_smote.copy()

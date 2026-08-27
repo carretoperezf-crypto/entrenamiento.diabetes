@@ -16,17 +16,31 @@ from sklearn.metrics import (
     f1_score,
     classification_report
 )
-
+from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 
-# ==========================================
-# CARGAR DATOS
-# ==========================================
-X_train= pd.read_csv("data/X_train_SMOTE.csv")
-Y_train= pd.read_csv("data/Y_train_SMOTE.csv").squeeze()
-X_test= pd.read_csv("data/X_test.csv")
-Y_test= pd.read_csv("data/Y_test.csv").squeeze()
 
+archivo = "data/Diabetes_Mexico_DATASET_codificado.xlsx"
+df = pd.read_excel(archivo)
+
+X = df.drop("riesgo_diabetes_cat", axis=1)
+Y = df["riesgo_diabetes_cat"]
+
+print("\n=== DATOS SEPARADOS ===")
+print("X:", X.shape)
+print("Y:", Y.shape)
+
+print("\n=== DISTRIBUCIÓN ORIGINAL ===")
+print(Y.value_counts().sort_index())
+
+# SIN SMOTE
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X,
+    Y,
+    test_size=0.20,
+    random_state=42,
+    stratify=Y
+)
 
 print("=== DATOS CARGADOS ===")
 
@@ -35,6 +49,11 @@ print("Y_train:", Y_train.shape)
 
 print("X_test:", X_test.shape)
 print("Y_test:", Y_test.shape)
+
+print("\n=== DISTRIBUCIÓN TRAIN SIN SMOTE ===")
+print(Y_train.value_counts().sort_index())
+print("\n=== DISTRIBUCIÓN TEST SIN SMOTE ===")
+print(Y_test.value_counts().sort_index())
 
 #==========================================
 #PERCEPTRON
@@ -51,6 +70,7 @@ modelo_perceptron = Perceptron(
 modelo_arbol = DecisionTreeClassifier(
     max_depth=5,
     random_state=42,
+    class_weight="balanced"
 )
 
 
@@ -77,6 +97,7 @@ modelo_rf = RandomForestClassifier(
     n_estimators=200,
     max_depth=None,
     random_state=42,
+    class_weight="balanced",
     n_jobs=-1
 )
 
@@ -184,31 +205,31 @@ def evaluar_modelo(nombre, y_real, y_pred):
 # ==========================================
 
 evaluar_modelo(
-    "XGBOOST",
+    "XGBOOST SIN SMOTE",
     Y_test,
     pred_xgb
 )
 
 evaluar_modelo(
-    "RANDOM FOREST",
+    "RANDOM FOREST SIN SMOTE",
     Y_test,
     pred_rf
 )
 
 evaluar_modelo(
-    "PERCEPTRON",
+    "PERCEPTRON SIN SMOTE",
     Y_test,
     pred_perceptron
 )
 
 evaluar_modelo(
-    "ARBOL DE DECISION",
+    "ARBOL DE DECISION SIN SMOTE",
     Y_test,
     pred_arbol
 )
 
 evaluar_modelo(
-    "RED NEURONAL - RELU + ADAM",
+    "RED NEURONAL - RELU + ADAM SIN SMOTE",
     Y_test,
     pred_red_neuronal
 )
@@ -284,21 +305,12 @@ print(
 
 
 # ==========================================
-# 13. GUARDAR RESULTADOS
+# GUARDAR RESULTADOS
 # ==========================================
 
 df_resultados.to_csv(
-    "data/comparacion_modelos_resultados.csv",
+    "data/comparacion_modelos_sin_smote_resultados.csv",
     index=False
-)
-
-
-print("\n==========================================")
-print("COMPARACIÓN TERMINADA")
-print("==========================================")
-
-print(
-    "Resultados guardados en:"
 )
 
 print(
