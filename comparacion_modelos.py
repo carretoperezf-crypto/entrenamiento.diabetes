@@ -1,6 +1,8 @@
 import pandas as pd
-import numpy as np  
+import numpy as np
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import Perceptron
@@ -19,16 +21,28 @@ from sklearn.metrics import (
 
 from xgboost import XGBClassifier
 
-# ==========================================
-# CARGAR DATOS
-# ==========================================
-X_train= pd.read_csv("data/X_train_SMOTE.csv")
-Y_train= pd.read_csv("data/Y_train_SMOTE.csv").squeeze()
-X_test= pd.read_csv("data/X_test.csv")
-Y_test= pd.read_csv("data/Y_test.csv").squeeze()
+archivo= "data/Diabetes_Mexico_DATASET_SMOTE.xlsx"
+df=pd.read_excel(archivo)
 
+print("\n === DISTRIBUCION DE CLASES ====")
+print(df["riesgo_diabetes_cat"].value_counts())
 
-print("=== DATOS CARGADOS ===")
+X = df.drop("riesgo_diabetes_cat", axis=1)
+Y = df["riesgo_diabetes_cat"]
+
+print("\n=== DATOS SEPARADOS ===")
+print("X:", X.shape)
+print("Y:", Y.shape)
+
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X,
+    Y,
+    test_size=0.20,
+    random_state=42,
+    stratify=Y
+)
+
+print("\n=== DIVISIÓN TRAIN / TEST ===")
 
 print("X_train:", X_train.shape)
 print("Y_train:", Y_train.shape)
@@ -36,11 +50,21 @@ print("Y_train:", Y_train.shape)
 print("X_test:", X_test.shape)
 print("Y_test:", Y_test.shape)
 
+
+print("\n=== DISTRIBUCIÓN TRAIN ===")
+print(Y_train.value_counts())
+print("\n=== DISTRIBUCIÓN TEST ===")
+print(Y_test.value_counts())
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+
 #==========================================
 #PERCEPTRON
 #==========================================
 modelo_perceptron = Perceptron(
-    max_iter=500,
+    max_iter=2000,
     eta0=0.01,
     random_state=42
 )
@@ -74,7 +98,7 @@ modelo_xgb = XGBClassifier(
 # ==========================================
 
 modelo_rf = RandomForestClassifier(
-    n_estimators=100,
+    n_estimators=200,
     max_depth=None,
     random_state=42,
     n_jobs=-1
@@ -88,11 +112,12 @@ modelo_red_neuronal= MLPClassifier(
     activation="relu",
     solver="adam",
     learning_rate_init=0.001,
-    max_iter=500,
+    max_iter=1000,
     random_state=42,
     early_stopping=True,
     validation_fraction=0.15,
-    alpha=0.0001
+    alpha=0.0001,
+    n_iter_no_change=30
 )
 
 # ==========================================
