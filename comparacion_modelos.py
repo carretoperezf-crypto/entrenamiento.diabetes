@@ -42,6 +42,10 @@ X_train, X_test, Y_train, Y_test = train_test_split(
     stratify=Y
 )
 
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
 print("\n=== DIVISIÓN TRAIN / TEST ===")
 
 print("X_train:", X_train.shape)
@@ -124,7 +128,7 @@ modelo_red_neuronal= MLPClassifier(
 # ENTRENAMIENTO
 # ==========================================
 print("\n=== ENTRENANDO PERCEPTRON ====")
-modelo_perceptron.fit(X_train,Y_train)
+modelo_perceptron.fit(X_train_scaled,Y_train)
 print("Perceptron termiando")
 
 print("\n=== ENTRENANDO ARBOL DE DECISION ====")
@@ -140,7 +144,7 @@ modelo_rf.fit(X_train,Y_train)
 print("Random Forest terminado")
 
 print("\n=== ENTRENANDO RED NEURONAL ===")
-modelo_red_neuronal.fit(X_train,Y_train)
+modelo_red_neuronal.fit(X_train_scaled,Y_train)
 print("Red Nueronal terminado")
 
 # ==========================================
@@ -149,9 +153,9 @@ print("Red Nueronal terminado")
 
 pred_xgb = modelo_xgb.predict(X_test)
 pred_rf = modelo_rf.predict(X_test)
-pred_perceptron = modelo_perceptron.predict(X_test)
+pred_perceptron = modelo_perceptron.predict(X_test_scaled)
 pred_arbol = modelo_arbol.predict(X_test)
-pred_red_neuronal = modelo_red_neuronal.predict(X_test)
+pred_red_neuronal = modelo_red_neuronal.predict(X_test_scaled)
 
 
 
@@ -314,12 +318,19 @@ print(
 # ==========================================
 # 13. GUARDAR RESULTADOS
 # ==========================================
+df_predicciones = pd.DataFrame({
+    "Real": Y_test,
+    "Perceptron": pred_perceptron,
+    "Árbol de Decisión": pred_arbol,
+    "Random Forest": pred_rf,
+    "XGBoost": pred_xgb,
+    "Red Neuronal": pred_red_neuronal
+})
 
-df_resultados.to_csv(
-    "data/comparacion_modelos_resultados.csv",
+df_predicciones.to_csv(
+    "data/comparacion_modelos_predicciones.csv",
     index=False
 )
-
 
 print("\n==========================================")
 print("COMPARACIÓN TERMINADA")
@@ -330,6 +341,6 @@ print(
 )
 
 print(
-    "data/comparacion_modelos_resultados.csv"
+    "data/comparacion_modelos_predicciones.csv"
 )
 
