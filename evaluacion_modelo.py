@@ -17,7 +17,7 @@ df_dataset=pd.read_excel(archivo_dataset)
 #MATRICES DE CONFUSIÓN
 print("\n=== MATRICES DE CONFUSIÓN ===")
 clases=[0,1,2]
-nombres_clases=["Sin diabetes", "Diabetes tipo 1", "Diabetes tipo 2"]
+nombres_clases=["Riesgo bajo", "Riesgo medio", "Riesgo alto"]
 columnas_modelos=["XGBoost", "Random Forest", "Perceptron", "Árbol de Decisión", "Red Neuronal"]
 
 for modelo in columnas_modelos:
@@ -29,7 +29,7 @@ for modelo in columnas_modelos:
     print("Modelo: ", modelo)
 
     fig,ax=plt.subplots(figsize=(6,5))
-    imagen=ax.imshow(matriz)
+    imagen=ax.imshow(matriz, cmap="Blues")
     ax.set_title("Matriz de Confusión " + modelo)
     ax.set_xlabel("Predicción")
     ax.set_ylabel("Real")
@@ -40,7 +40,11 @@ for modelo in columnas_modelos:
 
     for i in range(len(clases)):
         for j in range(len(clases)):
-            ax.text(j,i,matriz[i,j],ha="center",va="center",color="white" if matriz[i,j]>matriz.max()/2 else "black")
+            ax.text(j,i,matriz[i,j],ha="center",va="center",
+                    color="white" if matriz[i,j]>matriz.max()/2 else "black",
+                    fontsize=12, fontweight="bold")
+
+    fig.colorbar(imagen, ax=ax, label="Numero de casos")
 
     plt.tight_layout()
     plt.show()
@@ -61,7 +65,7 @@ plt.show()
 
 #GRAFICA DE CIUDADES 
 tabla_ciudades=pd.crosstab(df_dataset["Ciudad"],df_dataset["riesgo_diabetes_cat"])
-tabla_ciudades.columns=["Sin diabetes", "Diabetes tipo 1", "Diabetes tipo 2"]
+tabla_ciudades.columns=["Riesgo bajo", "Riesgo medio", "Riesgo alto"]
 
 tabla_ciudades["Total"]=tabla_ciudades.sum(axis=1)
 tabla_ciudades=tabla_ciudades.sort_values(by="Total",ascending=False)
