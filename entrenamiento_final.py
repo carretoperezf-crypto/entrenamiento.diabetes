@@ -19,7 +19,20 @@ df=pd.read_excel(archivo)
 print("\n === DISTRIBUCION DE CLASES ====")
 print(df["riesgo_diabetes_cat"].value_counts())
 
-X = df.drop("riesgo_diabetes_cat", axis=1)
+columnas= [
+    "sexo",
+    "edad",
+    "Peso",
+    "Estatura (cm)",
+    "IMC",
+    "muestra_suero",
+    "insulina",
+    "glu_suero",
+    "creat",
+    "colest",
+    "trig"]
+
+X = df[columnas]
 Y = df["riesgo_diabetes_cat"]
 
 print("Variables de entrada:", X.shape[1])

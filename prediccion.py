@@ -7,7 +7,22 @@ modelo = joblib.load(archivo_modelo)
 archivo_dataset = ("data/Diabetes_Mexico_DATASET_SMOTE.xlsx")
 df = pd.read_excel( archivo_dataset)
 
-X=df.drop("riesgo_diabetes_cat", axis=1)
+
+columnas= [
+    "sexo",
+    "edad",
+    "Peso",
+    "Estatura (cm)",
+    "IMC",
+    "muestra_suero",
+    "insulina",
+    "glu_suero",
+    "creat",
+    "colest",
+    "trig"]
+
+
+X = df[columnas]
 print("\n ===COLUMNAS UTILIZADAS=== ")
 for columna in X.columns:
     print("-", columna)

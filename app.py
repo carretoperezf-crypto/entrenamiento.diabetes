@@ -18,22 +18,27 @@ def predecir():
             "sexo": datos["sexo"],
             "edad": datos["edad"],
             "Peso": datos["peso"],
-            "Estatura": datos["estatura"],
+            "Estatura (cm)": datos["estatura"],
             "IMC": datos["imc"],
-            "glu_suero": datos["glu_suero"],
+            "muestra_suero": datos["muestra_suero"],
             "insulina": datos["insulina"],
-            "hb1ac": datos["hb1ac"],
-            "trig": datos["trig"],
-            "col_hdl": datos["col_hdl"],
-            "col_ldl": datos["col_ldl"],
-            "colest": datos["colest"],
-            "ac_urico": datos["ac_urico"],
+            "glu_suero": datos["glu_suero"],
             "creat": datos["creat"],
-            "albu": datos["albu"]
+            "colest": datos["colest"],
+            "trig": datos["trig"]
         }])
 
         prediccion = modelo.predict(paciente)[0]
-        return jsonify({"prediccion": int(prediccion)})
+        if prediccion == 0:
+            diagnostico = "Riesgo bajo"
+        elif prediccion == 1:
+            diagnostico = "Riesgo medio"
+        elif prediccion == 2:
+            diagnostico = "Riesgo alto"
+        else:
+            diagnostico = "Riesgo desconocido"
+        return jsonify({"prediccion": int(prediccion),
+                        "resultado": diagnostico})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
