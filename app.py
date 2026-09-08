@@ -1,8 +1,10 @@
 from flask import Flask,request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import joblib
 
 app = Flask(__name__)
+CORS(app)
 modelo = joblib.load("modelos/modelo_xgboost.pkl")
 
 @app.route("/")
@@ -38,7 +40,7 @@ def predecir():
         else:
             diagnostico = "Riesgo desconocido"
         return jsonify({"prediccion": int(prediccion),
-                        "resultado": diagnostico})
+                        "clasificacion": diagnostico})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
