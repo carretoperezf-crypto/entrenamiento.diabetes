@@ -5,122 +5,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Predicción de riesgo de diabetes</title>
+    <title>Datos del paciente · Predicción de riesgo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="contenedor">
+    <div class="pagina">
 
-        <h1>Predicción de riesgo de diabetes</h1>
+        <header class="cabecera">
+            <a class="enlace-inicio" href="inicio.html">← Predicción de riesgo</a>
+            <h1>Datos del paciente</h1>
+            <p class="cabecera-texto">
+                Completa los datos del paciente para estimar su riesgo a partir de mediciones
+                antropométricas y de laboratorio.
+            </p>
+        </header>
 
-        <p>
-            Ingresa los datos del paciente para realizar la predicción.
-        </p>
+        <main class="contenedor">
 
-        <form id="formularioPaciente">
+            <form id="formularioPaciente" novalidate>
 
-            <label for="sexo">Sexo:</label>
-            <select id="sexo" name="sexo" required>
-                <option value="">Seleccionar</option>
-                <option value="0">Femenino</option>
-                <option value="1">Masculino</option>
-            </select>
+                <fieldset class="seccion">
+                    <legend>Datos personales</legend>
+                    <div class="campos campos-2">
+                        <div class="campo">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo" name="sexo" required>
+                                <option value="">Seleccionar</option>
+                                <option value="0">Femenino</option>
+                                <option value="1">Masculino</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label for="edad">Edad (años)</label>
+                            <input type="number" id="edad" name="edad" min="1" max="120" placeholder="Ej. 45" required>
+                        </div>
+                    </div>
+                </fieldset>
 
-            <label for="edad">Edad:</label>
-            <input
-                type="number"
-                id="edad"
-                name="edad"
-                min="1"
-                max="120"
-                required
-            >
-            <label for="peso">Peso (kg):</label>
-            <input
-                type="number"
-                id="peso"
-                name="peso"
-                step="0.01"
-                min="1"
-                required
-            >
-            <label for="estatura">Estatura (cm):</label>
-            <input
-                type="number"
-                id="estatura"
-                name="estatura"
-                step="0.01"
-                min="50"
-                max="250"
-                required
-            >
-            <label for="imc">IMC:</label>
-            <input
-                type="number"
-                id="imc"
-                name="imc"
-                step="0.01"
-                required
-            >
-            <label for="muestra_suero">Muestra de suero:</label>
-            <input
-                type="number"
-                id="muestra_suero"
-                name="muestra_suero"
-                step="0.01"
-                required
->
-            <label for="glu_suero">Glucosa en suero:</label>
-            <input
-                type="number"
-                id="glu_suero"
-                name="glu_suero"
-                step="0.01"
-                required
-            >
-            <label for="insulina">Insulina:</label>
-            <input
-                type="number"
-                id="insulina"
-                name="insulina"
-                step="0.01"
-                required
-            >
-            <label for="trig">Triglicéridos:</label>
-            <input
-                type="number"
-                id="trig"
-                name="trig"
-                step="0.01"
-                required
-            >
-            <label for="colest">Colesterol:</label>
-            <input
-                type="number"
-                id="colest"
-                name="colest"
-                step="0.01"
-                required
-            >
-            <label for="creat">Creatinina:</label>
-            <input
-                type="number"
-                id="creat"
-                name="creat"
-                step="0.01"
-                required
-            >
-            <button type="submit">
-                Realizar predicción
-            </button>
-        </form>
+                <fieldset class="seccion">
+                    <legend>Medidas corporales</legend>
+                    <div class="campos campos-3">
+                        <div class="campo">
+                            <label for="peso">Peso (kg)</label>
+                            <input type="number" id="peso" name="peso" step="0.01" min="1" placeholder="Ej. 72.5" required>
+                        </div>
+                        <div class="campo">
+                            <label for="estatura">Estatura (cm)</label>
+                            <input type="number" id="estatura" name="estatura" step="0.01" min="50" max="250" placeholder="Ej. 168" required>
+                        </div>
+                        <div class="campo">
+                            <label for="imc">IMC</label>
+                            <input type="number" id="imc" name="imc" step="0.01" placeholder="Ej. 25.6" required>
+                        </div>
+                    </div>
+                </fieldset>
 
-        <div id="resultado">
+                <fieldset class="seccion">
+                    <legend>Resultados de laboratorio</legend>
+                    <div class="campos campos-3">
+                        <div class="campo">
+                            <label for="muestra_suero">Muestra de suero</label>
+                            <select id="muestra_suero" name="muestra_suero" required>
+                                <option value="0">No</option>
+                                <option value="1">Si</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label for="glu_suero">Glucosa en suero</label>
+                            <input type="number" id="glu_suero" name="glu_suero" step="0.01" required>
+                        </div>
+                        <div class="campo">
+                            <label for="insulina">Insulina</label>
+                            <input type="number" id="insulina" name="insulina" step="0.01" required>
+                        </div>
+                        <div class="campo">
+                            <label for="trig">Triglicéridos</label>
+                            <input type="number" id="trig" name="trig" step="0.01" required>
+                        </div>
+                        <div class="campo">
+                            <label for="colest">Colesterol</label>
+                            <input type="number" id="colest" name="colest" step="0.01" required>
+                        </div>
+                        <div class="campo">
+                            <label for="creat">Creatinina</label>
+                            <input type="number" id="creat" name="creat" step="0.01" required>
+                        </div>
+                    </div>
+                </fieldset>
 
-        </div>
+                <button type="submit">Realizar predicción</button>
+
+            </form>
+
+            <div id="resultado" class="resultado" aria-live="polite"></div>
+
+        </main>
 
     </div>
 
