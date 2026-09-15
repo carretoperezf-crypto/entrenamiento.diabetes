@@ -20,14 +20,13 @@ def predecir():
             "sexo": datos["sexo"],
             "edad": datos["edad"],
             "Peso": datos["peso"],
-            "Estatura (cm)": datos["estatura"],
+            "Estatura(cm)": datos["estatura"],
             "IMC": datos["imc"],
-            "muestra_suero": datos["muestra_suero"],
-            "insulina": datos["insulina"],
-            "glu_suero": datos["glu_suero"],
-            "creat": datos["creat"],
-            "colest": datos["colest"],
-            "trig": datos["trig"]
+            "Antecedente diabetes familiar": datos["antecedente diabetes familiar"],
+            "Antecedente hipertension familiar": datos["antecedente hipertension familiar"],
+            "Hipertension": datos["hipertension"],
+            "Actividad fisica": datos["actividad fisica"],
+            "Tabaquismo": datos["tabaquismo"]
         }])
 
         prediccion = modelo.predict(paciente)[0]

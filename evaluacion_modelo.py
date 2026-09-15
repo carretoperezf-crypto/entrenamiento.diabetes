@@ -8,7 +8,7 @@ from sklearn.metrics import (accuracy_score,
 
 archivo_resultados=("data/comparacion_modelos_resultados.csv")
 archivo_predicciones=("data/comparacion_modelos_predicciones.csv")
-archivo_dataset=("data/Diabetes_Mexico_DATASET.xlsx")
+archivo_dataset=("data/Diabetes_Mexico_DATASET_SMOTE.xlsx")
 
 df_resultados=pd.read_csv(archivo_resultados)
 df_predicciones=pd.read_csv(archivo_predicciones)

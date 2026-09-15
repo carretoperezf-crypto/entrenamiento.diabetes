@@ -10,7 +10,7 @@ from sklearn.metrics import (accuracy_score,
 from xgboost import plot_importance
 import matplotlib.pyplot as plt
 
-ruta="data/Diabetes_Mexico_DATASET.xlsx"
+ruta="data/Dataset_Mexico_V1.xlsx"
 
 df=pd.read_excel(ruta)
 
@@ -52,8 +52,8 @@ plt.xlabel("Categoria de riesgo")
 plt.ylabel("Numero de pacientes")
 plt.show()
 
-df[["Peso","Estatura (cm)", "IMC"]].isnull().sum()
-df[df["Peso"].isnull()][["Peso","Estatura (cm)", "IMC"]].head(20)
+df[["Peso","Estatura(cm)", "IMC"]].isnull().sum()
+df[df["Peso"].isnull()][["Peso","Estatura(cm)", "IMC"]].head(20)
 
 print("========== VARIABLES DEL DATASET ==========\n")
 for i, columna in enumerate(df.columns):
@@ -92,5 +92,6 @@ df_limpio["hb1ac"]=df_limpio["hb1ac"].fillna(df_limpio["hb1ac"].median())
 plt.boxplot(df_limpio["IMC"])
 plt.title("Boxplot de IMC")
 plt.show()
+
 
 

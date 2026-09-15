@@ -15,6 +15,18 @@ print("\n ===DATOS SEPARADOS=== ")
 print("X: ", X.shape)
 print("Y: ", Y.shape)
 
+print("\n ==== VALORES FALTANTES  EN X ====")
+print(X.isnull().sum())
+print("\n ==== VALORES FALTANTES  EN Y ====")
+print(Y.isnull().sum())
+
+for columna in X.columns:
+    cantidad=X[columna].isnull().sum()
+    if cantidad>0:
+        print(columna, "->", cantidad)
+print("\n === VALORES FALTANTES EN Y ===")
+print(Y.isnull().sum())
+
 smote = SMOTE(
     random_state=42
 )
