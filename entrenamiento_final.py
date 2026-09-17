@@ -25,16 +25,11 @@ columnas= [
     "Peso",
     "Estatura(cm)",
     "IMC",
-    "muestra_suero",
-    "insulina",
-    "glu_suero",
-    "creat",
-    "colest",
-    "trig",
     "Antecedente diabetes familiar",
     "Antecedente hipertension familiar",
-    "Tabaquismo",
-    "Actividad fisica"]
+    "Hipertension",
+    "Actividad fisica",
+    "Tabaquismo"]
 
 X = df[columnas]
 Y = df["riesgo_diabetes_cat"]

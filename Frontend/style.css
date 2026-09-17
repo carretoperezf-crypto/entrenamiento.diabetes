@@ -1,16 +1,17 @@
-/* ============================================
-   Tokens
-   ============================================ */
 :root {
     --azul-marino: #16324F;
     --azul-marino-suave: #294B6E;
     --acento: #2F8F82;
     --acento-oscuro: #24756A;
+    --acento-tenue: #E4F3EF;
     --fondo: #EEF2F6;
+    --campo: #F6F8FA;
     --tarjeta: #FFFFFF;
     --borde: #D7DEE3;
+    --borde-fuerte: #B9C4CE;
     --texto: #1B2735;
     --texto-tenue: #5B6B7A;
+    --error: #B23A3A;
 
     --riesgo-bajo-bg: #E4F3EF;
     --riesgo-bajo-borde: #2F8F82;
@@ -18,13 +19,15 @@
 
     --riesgo-medio-bg: #FBF1E1;
     --riesgo-medio-borde: #C98A2B;
-    --riesgo-medio-texto: #8A5C15;
+    --riesgo-medio-texto: #7A5012;
 
     --riesgo-alto-bg: #FBEAEA;
     --riesgo-alto-borde: #B23A3A;
     --riesgo-alto-texto: #8A2B2B;
 
-    --radio: 10px;
+    --radio: 12px;
+    --radio-chico: 8px;
+    --toque: 48px;
     --sombra: 0 1px 2px rgba(22, 50, 79, 0.06), 0 6px 20px rgba(22, 50, 79, 0.06);
 }
 
@@ -34,6 +37,10 @@
     padding: 0;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     background-color: var(--fondo);
@@ -41,6 +48,11 @@ body {
     min-height: 100vh;
     padding: 40px 20px 60px;
     line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 /* ============================================
@@ -53,7 +65,7 @@ body {
 }
 
 .cabecera {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
 .cabecera-etiqueta {
@@ -68,8 +80,8 @@ body {
     color: var(--azul-marino);
     font-size: 30px;
     font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 10px;
+    line-height: 1.2;
+    margin-bottom: 8px;
 }
 
 .cabecera-texto {
@@ -83,16 +95,19 @@ body {
     border: 1px solid var(--borde);
     border-radius: var(--radio);
     box-shadow: var(--sombra);
-    padding: 36px;
+    padding: 32px 36px 36px;
 }
 
 .enlace-inicio {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
     color: var(--acento-oscuro);
     font-weight: 600;
-    font-size: 13.5px;
+    font-size: 14px;
     text-decoration: none;
-    margin-bottom: 14px;
+    margin-bottom: 6px;
 }
 
 .enlace-inicio:hover {
@@ -157,14 +172,14 @@ body {
     position: relative;
     padding-left: 16px;
     color: var(--texto-tenue);
-    font-size: 14.5px;
+    font-size: 15px;
 }
 
 .inicio-requisitos li::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 8px;
+    top: 9px;
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -172,13 +187,16 @@ body {
 }
 
 .boton-primario {
-    display: inline-block;
-    padding: 14px 28px;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 28px;
+    border-radius: var(--radio-chico);
     background-color: var(--azul-marino);
     color: white;
     font-weight: 600;
-    font-size: 15.5px;
+    font-size: 16px;
     text-decoration: none;
     transition: background-color 0.15s ease;
 }
@@ -192,14 +210,10 @@ body {
     outline-offset: 2px;
 }
 
-@media (max-width: 650px) {
-    .inicio {
-        padding: 30px 24px;
-    }
-
-    .inicio-titulo {
-        font-size: 27px;
-    }
+.inicio-aviso {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--texto-tenue);
 }
 
 /* ============================================
@@ -208,7 +222,8 @@ body {
 .seccion {
     border: none;
     border-top: 1px solid var(--borde);
-    padding: 22px 0;
+    padding: 24px 0;
+    min-width: 0;
 }
 
 .seccion:first-child {
@@ -216,19 +231,25 @@ body {
     padding-top: 0;
 }
 
-.seccion legend {
+.seccion > legend {
+    /* float evita que la leyenda se monte sobre el borde del fieldset */
+    float: left;
+    width: 100%;
     color: var(--azul-marino);
     font-weight: 600;
-    font-size: 15px;
-    padding: 0;
+    font-size: 16px;
     margin-bottom: 16px;
     padding-left: 12px;
     border-left: 3px solid var(--acento);
 }
 
+.seccion > legend + * {
+    clear: both;
+}
+
 .campos {
     display: grid;
-    gap: 18px 22px;
+    gap: 20px 22px;
 }
 
 .campos-2 {
@@ -242,66 +263,258 @@ body {
 .campo {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
-label {
+/* Etiquetas de campo (texto y grupos de opciones) */
+.campo > label,
+.campo-opciones > legend {
     font-weight: 500;
-    font-size: 13.5px;
-    color: var(--texto-tenue);
-    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--texto);
+    margin-bottom: 8px;
+    line-height: 1.35;
 }
 
-input,
-select {
+.campo-opciones {
+    border: none;
+}
+
+/* ---------- Entradas de texto/número ---------- */
+input[type="number"],
+input[type="text"] {
     width: 100%;
-    padding: 10px 12px;
+    min-height: var(--toque);
+    padding: 10px 14px;
     border: 1px solid var(--borde);
-    border-radius: 8px;
+    border-radius: var(--radio-chico);
     font-family: inherit;
-    font-size: 15px;
+    /* 16px evita que iOS haga zoom al enfocar */
+    font-size: 16px;
     color: var(--texto);
-    background-color: var(--fondo);
+    background-color: var(--campo);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input::placeholder {
     color: #9AA7B2;
 }
 
-input:focus,
-select:focus {
+input[type="number"]:focus {
     outline: none;
     border-color: var(--acento);
     box-shadow: 0 0 0 3px rgba(47, 143, 130, 0.18);
     background-color: var(--tarjeta);
 }
 
-input:focus-visible,
-select:focus-visible {
+/* Campo con unidad al final (kg, cm, años) */
+.con-unidad {
+    position: relative;
+}
+
+.con-unidad input {
+    padding-right: 56px;
+}
+
+.unidad {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--texto-tenue);
+    pointer-events: none;
+}
+
+/* ---------- Control segmentado (Sí / No) ---------- */
+.segmentado {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-chico);
+    background-color: var(--campo);
+}
+
+.segmentado label {
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+.segmentado input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.segmentado span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--texto-tenue);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+
+.segmentado label:hover span {
+    color: var(--texto);
+}
+
+.segmentado input:checked + span {
+    background-color: var(--azul-marino);
+    color: white;
+    font-weight: 600;
+}
+
+.segmentado input:focus-visible + span {
     outline: 2px solid var(--acento);
     outline-offset: 1px;
 }
 
-button[type="submit"] {
-    width: 100%;
-    margin-top: 28px;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--azul-marino);
-    color: white;
-    font-family: inherit;
-    font-size: 15.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
+/* ---------- Errores (solo después de intentar enviar) ---------- */
+.intentado input[type="number"]:invalid {
+    border-color: var(--error);
+    background-color: #FDF6F6;
 }
 
-button[type="submit"]:hover {
+.intentado .campo-opciones:has(input:invalid) .segmentado {
+    border-color: var(--error);
+    background-color: #FDF6F6;
+}
+
+.formulario-aviso {
+    margin-top: 4px;
+    padding: 12px 14px;
+    border-radius: var(--radio-chico);
+    background-color: var(--riesgo-alto-bg);
+    color: var(--riesgo-alto-texto);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ---------- Panel IMC ---------- */
+.imc {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "etiqueta valor"
+        "ayuda    ayuda";
+    align-items: baseline;
+    gap: 2px 14px;
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: var(--radio-chico);
+    background-color: var(--campo);
+    border: 1px dashed var(--borde-fuerte);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.imc-etiqueta {
+    grid-area: etiqueta;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--texto-tenue);
+}
+
+input.imc-valor {
+    grid-area: valor;
+    min-height: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--azul-marino);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    cursor: default;
+}
+
+input.imc-valor:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.imc-ayuda {
+    grid-area: ayuda;
+    font-size: 13.5px;
+    color: var(--texto-tenue);
+}
+
+.imc[data-estado="listo"] {
+    border-style: solid;
+    border-color: var(--borde);
+    background-color: var(--tarjeta);
+}
+
+.imc[data-estado="listo"] .imc-ayuda {
+    color: var(--texto);
+    font-weight: 500;
+}
+
+/* ---------- Botón enviar ---------- */
+.acciones-formulario {
+    margin-top: 12px;
+}
+
+.boton-enviar,
+.boton-secundario {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 20px;
+    border-radius: var(--radio-chico);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.boton-enviar {
+    border: none;
+    background-color: var(--azul-marino);
+    color: white;
+}
+
+.boton-enviar:hover {
     background-color: var(--azul-marino-suave);
 }
 
-button[type="submit"]:focus-visible {
+.boton-enviar:disabled {
+    opacity: 0.7;
+    cursor: progress;
+}
+
+.boton-secundario {
+    border: 1px solid var(--borde-fuerte);
+    background-color: var(--tarjeta);
+    color: var(--azul-marino);
+}
+
+.boton-secundario:hover {
+    background-color: var(--campo);
+}
+
+.boton-enviar:focus-visible,
+.boton-secundario:focus-visible {
     outline: 2px solid var(--acento);
     outline-offset: 2px;
 }
@@ -310,9 +523,8 @@ button[type="submit"]:focus-visible {
    Result panel
    ============================================ */
 .resultado {
-    margin-top: 22px;
-    border-radius: var(--radio);
-    overflow: hidden;
+    margin-top: 24px;
+    scroll-margin-top: 16px;
 }
 
 .resultado:empty {
@@ -320,91 +532,465 @@ button[type="submit"]:focus-visible {
 }
 
 .resultado-tarjeta {
-    padding: 22px 24px;
+    --color-riesgo: var(--texto-tenue);
+    --color-riesgo-texto: var(--azul-marino);
+    --color-riesgo-bg: var(--tarjeta);
+
     border: 1px solid var(--borde);
-    border-left: 4px solid var(--texto-tenue);
     border-radius: var(--radio);
     background-color: var(--tarjeta);
+    overflow: hidden;
 }
 
-.resultado-tarjeta h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--azul-marino);
-    margin-bottom: 10px;
+.riesgo-bajo .resultado-tarjeta {
+    --color-riesgo: var(--riesgo-bajo-borde);
+    --color-riesgo-texto: var(--riesgo-bajo-texto);
+    --color-riesgo-bg: var(--riesgo-bajo-bg);
 }
 
-.resultado-fila {
+.riesgo-medio .resultado-tarjeta {
+    --color-riesgo: var(--riesgo-medio-borde);
+    --color-riesgo-texto: var(--riesgo-medio-texto);
+    --color-riesgo-bg: var(--riesgo-medio-bg);
+}
+
+.riesgo-alto .resultado-tarjeta,
+.resultado-error .resultado-tarjeta {
+    --color-riesgo: var(--riesgo-alto-borde);
+    --color-riesgo-texto: var(--riesgo-alto-texto);
+    --color-riesgo-bg: var(--riesgo-alto-bg);
+}
+
+/* Encabezado con el nivel de riesgo */
+.resultado-encabezado {
+    padding: 22px 24px 20px;
+    background-color: var(--color-riesgo-bg);
+    border-bottom: 1px solid var(--borde);
+}
+
+.resultado-encabezado h2 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-riesgo-texto);
+}
+
+.resultado-encabezado h2:focus {
+    outline: none;
+}
+
+.resultado-resumen {
+    margin-top: 10px;
+    font-size: 15.5px;
+    color: var(--texto);
+    max-width: 62ch;
+}
+
+/* Medidor de 3 niveles */
+.medidor {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 16px;
+}
+
+.medidor-tramo {
     display: flex;
-    justify-content: space-between;
-    font-size: 15px;
-    padding: 6px 0;
-}
-
-.resultado-fila span:first-child {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
     color: var(--texto-tenue);
 }
 
-.resultado-fila span:last-child {
+.medidor-tramo::before {
+    content: "";
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgba(22, 50, 79, 0.12);
+}
+
+.medidor-tramo.activo::before {
+    background-color: var(--color-riesgo);
+}
+
+.medidor-tramo.actual {
+    color: var(--color-riesgo-texto);
+    font-weight: 700;
+}
+
+/* Datos resumidos */
+.resultado-datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.resultado-datos div {
+    display: flex;
+    flex-direction: column;
+}
+
+.resultado-datos dt {
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+}
+
+.resultado-datos dd {
+    font-size: 16px;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
-.resultado.riesgo-bajo .resultado-tarjeta {
-    background-color: var(--riesgo-bajo-bg);
-    border-left-color: var(--riesgo-bajo-borde);
-}
-.resultado.riesgo-bajo h2,
-.resultado.riesgo-bajo .resultado-fila span:last-child {
-    color: var(--riesgo-bajo-texto);
+/* Bloques: consecuencias, acciones, hospitales */
+.bloque {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--borde);
 }
 
-.resultado.riesgo-medio .resultado-tarjeta {
-    background-color: var(--riesgo-medio-bg);
-    border-left-color: var(--riesgo-medio-borde);
-}
-.resultado.riesgo-medio h2,
-.resultado.riesgo-medio .resultado-fila span:last-child {
-    color: var(--riesgo-medio-texto);
+.bloque h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--azul-marino);
+    margin-bottom: 12px;
 }
 
-.resultado.riesgo-alto .resultado-tarjeta {
+.bloque-texto {
+    font-size: 15px;
+    color: var(--texto-tenue);
+    margin-bottom: 14px;
+}
+
+.lista-consecuencias {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lista-consecuencias li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 15px;
+}
+
+.lista-consecuencias li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-riesgo);
+}
+
+.lista-acciones {
+    list-style: none;
+    counter-reset: accion;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lista-acciones li {
+    counter-increment: accion;
+    position: relative;
+    padding-left: 38px;
+    font-size: 15px;
+    min-height: 26px;
+}
+
+.lista-acciones li::before {
+    content: counter(accion);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    background-color: var(--azul-marino);
+}
+
+/* Señales de alarma */
+.alarma {
+    margin: 20px 24px 0;
+    padding: 14px 16px;
+    border-radius: var(--radio-chico);
+    border-left: 4px solid var(--riesgo-alto-borde);
     background-color: var(--riesgo-alto-bg);
-    border-left-color: var(--riesgo-alto-borde);
-}
-.resultado.riesgo-alto h2,
-.resultado.riesgo-alto .resultado-fila span:last-child {
+    font-size: 14.5px;
     color: var(--riesgo-alto-texto);
 }
 
-.resultado-error .resultado-tarjeta {
-    border-left-color: var(--riesgo-alto-borde);
-    color: var(--riesgo-alto-texto);
+.alarma strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.alarma a {
+    color: inherit;
+    font-weight: 700;
+}
+
+/* Hospitales */
+.lista-hospitales {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.hospital {
+    padding: 14px 16px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-chico);
+    background-color: var(--tarjeta);
+}
+
+.hospital-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.hospital-nombre {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--azul-marino);
+    line-height: 1.3;
+}
+
+.hospital-distancia {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--acento-oscuro);
+    font-variant-numeric: tabular-nums;
+}
+
+.hospital-institucion {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--acento-oscuro);
+    font-weight: 500;
+}
+
+.hospital-direccion {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--texto-tenue);
+}
+
+.hospital-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.hospital-acciones a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: var(--radio-chico);
+    border: 1px solid var(--borde-fuerte);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--azul-marino);
+    text-decoration: none;
+}
+
+.hospital-acciones a.principal {
+    border-color: var(--acento-oscuro);
+    background-color: var(--acento-oscuro);
+    color: white;
+}
+
+.hospital-acciones a:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+}
+
+.estado-carga {
+    font-size: 14.5px;
+    color: var(--texto-tenue);
+}
+
+.nota {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--texto-tenue);
+}
+
+/* Pie del resultado */
+.resultado-pie {
+    padding: 20px 24px 24px;
+}
+
+.aviso-medico {
+    font-size: 13px;
+    color: var(--texto-tenue);
+    margin-bottom: 16px;
+}
+
+/* Estado de carga y error */
+.resultado-simple {
+    padding: 22px 24px;
+    border-left: 4px solid var(--color-riesgo);
+}
+
+.resultado-simple h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-riesgo-texto);
+    margin-bottom: 6px;
+}
+
+.resultado-simple p {
+    font-size: 15px;
+    color: var(--texto-tenue);
+}
+
+.resultado-simple p + p {
+    margin-top: 4px;
+}
+
+.cargando .resultado-simple h2::after {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 10px;
+    vertical-align: -1px;
+    border: 2px solid var(--borde);
+    border-top-color: var(--acento);
+    border-radius: 50%;
+    animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ============================================
-   Responsive
+   Móvil
    ============================================ */
 @media (max-width: 650px) {
     body {
-        padding: 24px 14px 40px;
+        padding: 12px 0 0;
     }
 
-    .contenedor {
-        padding: 22px;
+    .cabecera {
+        padding: 0 18px;
+        margin-bottom: 16px;
     }
 
     .cabecera h1 {
-        font-size: 25px;
+        font-size: 26px;
+    }
+
+    .cabecera-texto {
+        font-size: 15px;
+    }
+
+    /* Tarjeta de borde a borde */
+    .contenedor {
+        border-radius: 18px 18px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        box-shadow: none;
+        padding: 22px 18px 24px;
+        min-height: calc(100vh - 140px);
     }
 
     .campos-2,
     .campos-3 {
         grid-template-columns: 1fr;
     }
+
+    /* Peso y estatura lado a lado también en móvil */
+    .seccion:nth-of-type(2) .campos-2 {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    /* Botón fijo abajo, respetando el área segura del iPhone */
+    .acciones-formulario {
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+        margin: 8px -18px 0;
+        padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+        background-color: rgba(255, 255, 255, 0.94);
+        border-top: 1px solid var(--borde);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .resultado-encabezado,
+    .resultado-datos,
+    .bloque,
+    .resultado-pie,
+    .resultado-simple {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .alarma {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .resultado-pie {
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .hospital-acciones a {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    /* Pantalla de inicio */
+    .pagina-inicio {
+        min-height: calc(100vh - 12px);
+        align-items: flex-end;
+    }
+
+    .inicio {
+        border-radius: 18px 18px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        padding: 30px 22px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .inicio-titulo {
+        font-size: 28px;
+    }
+
+    .boton-primario {
+        width: 100%;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     * {
         transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
     }
 }
