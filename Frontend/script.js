@@ -6,7 +6,7 @@
 // Si abres la app desde un celular, cambia 127.0.0.1 por la IP de tu
 // computadora en la red local (por ejemplo "http://192.168.1.50:5000")
 // y ejecuta Flask con app.run(host="0.0.0.0", port=5000).
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "http://127.0.0.1:5001";
 
 const formulario = document.getElementById("formularioPaciente");
 const resultado = document.getElementById("resultado");
@@ -393,7 +393,8 @@ function obtenerUbicacion() {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude
             }),
-            () => resolve(null),
+            (error)=>{console.warn("No se pudo obtener la ubicacion: ",error);
+            resolve(null);},
             { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
         );
     });
@@ -436,63 +437,100 @@ async function buscarHospitales() {
     const boton = document.getElementById("botonHospitales");
     const contenedor = document.getElementById("listaHospitales");
 
+    if (!boton || !contenedor) {
+        return;
+    }
+
     boton.disabled = true;
-    boton.textContent = "Buscando…";
+    boton.textContent = "Obteniendo ubicación…";
     contenedor.innerHTML = "";
 
     const ubicacion = await obtenerUbicacion();
 
-    const params = new URLSearchParams({ limite: "5" });
-    if (ubicacion) {
-        params.set("lat", ubicacion.lat);
-        params.set("lng", ubicacion.lng);
+    // El usuario no permitió la ubicación
+    if (!ubicacion) {
+
+        contenedor.innerHTML = `
+            <p class="nota">
+                Para buscar hospitales cercanos necesitamos acceder a la
+                ubicación de tu dispositivo.
+                Activa la ubicación y permite el acceso cuando el navegador
+                lo solicite.
+            </p>
+        `;
+
+        boton.disabled = false;
+        boton.textContent = "Intentar nuevamente";
+
+        return;
     }
+
+    boton.textContent = "Buscando hospitales…";
+
+    const params = new URLSearchParams({
+        lat: ubicacion.lat,
+        lng: ubicacion.lng,
+        limite: "5"
+    });
 
     try {
 
-        const respuesta = await fetch(`${API_URL}/hospitales?${params}`);
+        const respuesta = await fetch(
+            `${API_URL}/hospitales?${params}`
+        );
+
         const data = await respuesta.json();
 
         if (!respuesta.ok) {
-            throw new Error(data.error || "No se pudo obtener la lista.");
+            throw new Error(
+                data.error || "No se pudo obtener la lista."
+            );
         }
 
         const lista = data.hospitales || [];
 
         if (lista.length === 0) {
+
             contenedor.innerHTML = `
                 <p class="nota">
-                    No hay hospitales registrados cerca de tu ubicación.
-                    Acude a tu unidad de medicina familiar o centro de salud.
+                    No encontramos hospitales registrados cerca de tu
+                    ubicación.
                 </p>
             `;
-        } else {
-            contenedor.innerHTML = `
-                <ul class="lista-hospitales">
-                    ${lista.map(hospitalHTML).join("")}
-                </ul>
-                ${ubicacion ? "" : `
-                    <p class="nota">
-                        No se pudo usar tu ubicación, así que la lista no está
-                        ordenada por distancia. Activa la ubicación en tu
-                        navegador para ver los más cercanos.
-                    </p>
-                `}
-            `;
+
+            boton.disabled = false;
+            boton.textContent = "Buscar nuevamente";
+
+            return;
         }
+
+        contenedor.innerHTML = `
+            <ul class="lista-hospitales">
+                ${lista.map(hospitalHTML).join("")}
+            </ul>
+
+            <p class="nota">
+                Hospitales ordenados por distancia aproximada desde tu
+                ubicación actual.
+            </p>
+        `;
 
         boton.hidden = true;
 
     } catch (error) {
 
-        console.error("Error al buscar hospitales:", error);
+        console.error(
+            "Error al buscar hospitales:",
+            error
+        );
 
         contenedor.innerHTML = `
             <p class="nota">
-                No se pudo cargar la lista de hospitales. Verifica que el
-                servidor esté en ejecución e inténtalo de nuevo.
+                No se pudo cargar la lista de hospitales.
+                Verifica que Flask esté en ejecución e inténtalo de nuevo.
             </p>
         `;
+
         boton.disabled = false;
         boton.textContent = "Reintentar";
     }

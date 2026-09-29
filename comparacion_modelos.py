@@ -211,46 +211,13 @@ def evaluar_modelo(nombre, y_real, y_pred):
     )
 
 
-# ==========================================
-# EVALUAR MODELOS
-# ==========================================
-
-evaluar_modelo(
-    "XGBOOST",
-    Y_test,
-    pred_xgb
-)
-
-evaluar_modelo(
-    "RANDOM FOREST",
-    Y_test,
-    pred_rf
-)
-
-evaluar_modelo(
-    "PERCEPTRON",
-    Y_test,
-    pred_perceptron
-)
-
-evaluar_modelo(
-    "ARBOL DE DECISION",
-    Y_test,
-    pred_arbol
-)
-
-evaluar_modelo(
-    "RED NEURONAL - RELU + ADAM",
-    Y_test,
-    pred_red_neuronal
-)
-
-# ==========================================
-# COMPARACIÓN FINAL
-# ==========================================
+evaluar_modelo( "XGBOOST", Y_test, pred_xgb)
+evaluar_modelo("RANDOM FOREST",Y_test,pred_rf)
+evaluar_modelo("PERCEPTRON",Y_test, pred_perceptron)
+evaluar_modelo("ARBOL DE DECISION", Y_test, pred_arbol)
+evaluar_modelo("RED NEURONAL - RELU + ADAM",Y_test, pred_red_neuronal)
 
 resultados = []
-
 modelos = [
     ("Perceptrón", pred_perceptron),
     ("Árbol de Decisión", pred_arbol),
@@ -258,7 +225,6 @@ modelos = [
     ("XGBoost", pred_xgb),
     ("Red Neuronal", pred_red_neuronal)
 ]
-
 
 for nombre, predicciones in modelos:
 
@@ -298,11 +264,6 @@ df_resultados = pd.DataFrame(
     resultados
 )
 
-
-# ==========================================
-#  ORDENAR POR F1
-# ==========================================
-
 df_resultados = df_resultados.sort_values(
     by="F1",
     ascending=False
@@ -314,10 +275,6 @@ print(
     )
 )
 
-
-# ==========================================
-# 13. GUARDAR RESULTADOS
-# ==========================================
 df_predicciones = pd.DataFrame({
     "Real": Y_test,
     "Perceptron": pred_perceptron,
