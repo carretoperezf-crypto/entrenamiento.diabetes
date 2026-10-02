@@ -1,17 +1,36 @@
-from flask import Flask,request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import joblib
 import requests
 import math
+import os
 
-app = Flask(__name__)
+# Carpeta donde está este archivo (para que las rutas funcionen
+# sin importar desde dónde se ejecute app.py)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Flask sirve la carpeta static/ (index.html, inicio.html, script.js, style.css)
+app = Flask(
+    __name__,
+    static_folder=os.path.join(BASE_DIR, "Frontend"),
+    static_url_path=""
+)
 CORS(app)
-modelo = joblib.load("modelos/modelo_xgboost.pkl")
+
+# Mostrar acentos tal cual en las respuestas JSON
+try:
+    app.json.ensure_ascii = False
+except AttributeError:
+    app.config["JSON_AS_ASCII"] = False
+
+modelo = joblib.load(os.path.join(BASE_DIR, "modelos", "modelo_xgboost.pkl"))
+
 
 @app.route("/")
 def inicio():
-    return "API de predicción de riesgo de diabetes"    
+    return app.send_static_file("inicio.html")
+
 
 @app.route("/predict", methods=["POST"])
 def predecir():
@@ -49,6 +68,18 @@ def predecir():
 # ==========================================
 # HOSPITALES CERCANOS
 # ==========================================
+
+SERVIDORES_OVERPASS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+]
+
+ENCABEZADOS_OVERPASS = {
+    "User-Agent": "PrediccionDiabetesMX/1.0 (proyecto escolar)",
+}
+
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
     """Calcula la distancia aproximada en km usando Haversine."""
@@ -91,7 +122,7 @@ def hospitales():
 
         # OpenStreetMap / Overpass: hospitales en un radio de 10 km.
         consulta = f"""
-        [out:json][timeout:20];
+        [out:json][timeout:15];
         (
           node["amenity"="hospital"](around:10000,{lat},{lng});
           way["amenity"="hospital"](around:10000,{lat},{lng});
@@ -100,13 +131,28 @@ def hospitales():
         out center tags;
         """
 
-        respuesta = requests.post(
-            "https://overpass-api.de/api/interpreter",
-            data=consulta,
-            timeout=25
-        )
-        respuesta.raise_for_status()
-        datos = respuesta.json()
+        # Probar cada servidor hasta que uno responda
+        datos = None
+        errores = []
+
+        for servidor in SERVIDORES_OVERPASS:
+            try:
+                respuesta = requests.post(
+                    servidor,
+                    data={"data": consulta},
+                    headers=ENCABEZADOS_OVERPASS,
+                    timeout=20
+                )
+                respuesta.raise_for_status()
+                datos = respuesta.json()
+                print(f"Overpass OK: {servidor}")
+                break
+            except (requests.RequestException, ValueError) as e:
+                errores.append(f"{servidor} -> {e}")
+                print(f"Overpass falló: {servidor} -> {e}")
+
+        if datos is None:
+            raise requests.RequestException(" | ".join(errores))
 
         hospitales_encontrados = []
 
@@ -186,6 +232,7 @@ def hospitales():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

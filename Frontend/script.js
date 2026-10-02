@@ -3,10 +3,9 @@
 // ==========================================
 
 // Dirección del servidor Flask.
-// Si abres la app desde un celular, cambia 127.0.0.1 por la IP de tu
-// computadora en la red local (por ejemplo "http://192.168.1.50:5000")
-// y ejecuta Flask con app.run(host="0.0.0.0", port=5000).
-const API_URL = "http://127.0.0.1:5001";
+// Vacía = mismo servidor que entrega esta página (Flask sirve la carpeta
+// static/). Así funciona igual en la computadora, por IP o por túnel HTTPS.
+const API_URL = "";
 
 const formulario = document.getElementById("formularioPaciente");
 const resultado = document.getElementById("resultado");
@@ -619,7 +618,7 @@ formulario.addEventListener("submit", async function (event) {
         console.error("Error de conexión:", error);
         mostrarError("No se pudo conectar con el servidor", [
             "Verifica que Flask esté en ejecución.",
-            `Dirección configurada: ${API_URL}`
+            `Dirección configurada: ${API_URL || window.location.origin}`
         ]);
         botonEnviar.disabled = false;
         return;
