@@ -217,6 +217,138 @@ body {
 }
 
 /* ============================================
+   Menú (icono de tres rayitas)
+   ============================================ */
+.inicio {
+    position: relative;
+}
+
+.menu {
+    position: absolute;
+    top: 30px;
+    right: 32px;
+    z-index: 20;
+}
+
+.menu-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--toque);
+    height: var(--toque);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-chico);
+    background-color: var(--tarjeta);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.menu-boton:hover {
+    background-color: var(--campo);
+    border-color: var(--borde-fuerte);
+}
+
+.menu-boton:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+}
+
+.menu-boton[aria-expanded="true"] {
+    background-color: var(--azul-marino);
+    border-color: var(--azul-marino);
+}
+
+/* Las tres rayitas */
+.menu-icono {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 20px;
+}
+
+.menu-icono span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--azul-marino);
+    transition: transform 0.2s ease, opacity 0.15s ease, background-color 0.15s ease;
+}
+
+/* Al abrir, las rayitas se convierten en una X */
+.menu-boton[aria-expanded="true"] .menu-icono span {
+    background-color: white;
+}
+
+.menu-boton[aria-expanded="true"] .menu-icono span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.menu-boton[aria-expanded="true"] .menu-icono span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-boton[aria-expanded="true"] .menu-icono span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Lista de opciones */
+.menu-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 300px;
+    max-width: calc(100vw - 32px);
+    list-style: none;
+    padding: 6px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background-color: var(--tarjeta);
+    box-shadow: 0 2px 4px rgba(22, 50, 79, 0.08), 0 14px 36px rgba(22, 50, 79, 0.16);
+    animation: menu-entrar 0.16s ease-out;
+}
+
+@keyframes menu-entrar {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+.menu-panel a {
+    display: flex;
+    align-items: center;
+    min-height: var(--toque);
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: var(--azul-marino);
+    font-size: 15.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    text-decoration: none;
+}
+
+.menu-panel a:hover {
+    background-color: var(--acento-tenue);
+    color: var(--riesgo-bajo-texto);
+}
+
+.menu-panel a:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: -2px;
+}
+
+/* "Quiénes somos" va separado: no es contenido sobre la diabetes */
+.menu-aparte {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--borde);
+}
+
+.menu-aparte a {
+    color: var(--texto-tenue);
+}
+
+/* ============================================
    Form sections
    ============================================ */
 .seccion {
@@ -982,6 +1114,11 @@ input.imc-valor:focus {
         font-size: 28px;
     }
 
+    .menu {
+        top: 16px;
+        right: 14px;
+    }
+
     .boton-primario {
         width: 100%;
     }
@@ -992,5 +1129,323 @@ input.imc-valor:focus {
         transition: none !important;
         animation: none !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================
+   Páginas informativas
+   (introducción, síntomas, prevención, tratamientos, quiénes somos)
+   ============================================ */
+.cabecera {
+    position: relative;
+}
+
+.cabecera .menu {
+    top: 0;
+    right: 0;
+}
+
+.cabecera-info .enlace-inicio {
+    min-height: var(--toque);
+}
+
+/* Opción del menú que corresponde a la página abierta */
+.menu-panel a[aria-current="page"] {
+    background-color: var(--acento-tenue);
+    color: var(--riesgo-bajo-texto);
+    font-weight: 600;
+}
+
+.articulo > section + section {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--borde);
+}
+
+.articulo h2 {
+    color: var(--azul-marino);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.3;
+    padding-left: 12px;
+    border-left: 3px solid var(--acento);
+    margin-bottom: 14px;
+}
+
+.articulo p {
+    font-size: 16px;
+    max-width: 66ch;
+}
+
+.articulo p + p {
+    margin-top: 12px;
+}
+
+.articulo p a,
+.fuente a {
+    color: var(--acento-oscuro);
+    font-weight: 600;
+}
+
+/* Lista con puntos */
+.lista-puntos {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+    max-width: 66ch;
+}
+
+.lista-puntos li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 16px;
+}
+
+.lista-puntos li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--acento);
+}
+
+.lista-puntos strong {
+    color: var(--azul-marino);
+    font-weight: 600;
+}
+
+.articulo .lista-acciones {
+    margin-top: 14px;
+    max-width: 66ch;
+}
+
+.articulo .lista-acciones li {
+    font-size: 16px;
+}
+
+/* Lista con iconos (síntomas, medidas, tratamientos) */
+.lista-iconos {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+    margin-top: 18px;
+}
+
+.lista-iconos.una-columna {
+    grid-template-columns: 1fr;
+}
+
+.lista-iconos li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 16px;
+}
+
+.lista-iconos .icono {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--acento-tenue);
+    color: var(--acento-oscuro);
+}
+
+.lista-iconos .icono svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.lista-iconos .texto {
+    padding-top: 10px;
+    line-height: 1.4;
+}
+
+.lista-iconos .texto strong {
+    display: block;
+    color: var(--azul-marino);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.lista-iconos.con-detalle .texto {
+    padding-top: 0;
+}
+
+/* Ilustraciones */
+.figura {
+    margin-top: 20px;
+}
+
+.figura-paneles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.panel {
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-chico);
+    overflow: hidden;
+    background-color: var(--tarjeta);
+}
+
+.panel svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.panel-texto {
+    padding: 12px 14px 14px;
+    border-top: 1px solid var(--borde);
+    font-size: 14.5px;
+    color: var(--texto-tenue);
+}
+
+.panel-texto strong {
+    display: block;
+    color: var(--azul-marino);
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--texto-tenue);
+}
+
+.leyenda span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.leyenda i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+}
+
+.leyenda .l-glucosa { border-radius: 50%; background-color: #C98A2B; }
+.leyenda .l-insulina { background-color: var(--acento); transform: rotate(45deg) scale(0.8); }
+.leyenda .l-sangre { border-radius: 3px; background-color: #F3CFCF; }
+.leyenda .l-celula { border-radius: 3px; background-color: var(--acento-tenue); border: 1.5px solid var(--acento); }
+
+/* Colores de las ilustraciones */
+.il-sangre { fill: #FBEAEA; }
+.il-sangre-borde { stroke: #E7BDBD; stroke-width: 2; fill: none; }
+.il-fondo { fill: var(--campo); }
+.il-celula { fill: var(--acento-tenue); stroke: var(--acento); stroke-width: 2.5; }
+.il-glucosa { fill: #C98A2B; }
+.il-insulina { fill: var(--acento); }
+.il-insulina-tenue { fill: var(--acento); opacity: 0.35; }
+.il-puerta-abierta { fill: var(--acento-tenue); }
+.il-puerta-cerrada { fill: var(--azul-marino); }
+.il-flecha { stroke: #C98A2B; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.il-bloqueo { stroke: var(--error); stroke-width: 3; fill: none; stroke-linecap: round; }
+
+/* Aviso destacado */
+.nota-destacada {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: var(--radio-chico);
+    border-left: 4px solid var(--acento);
+    background-color: var(--acento-tenue);
+    font-size: 15px;
+    color: var(--riesgo-bajo-texto);
+}
+
+.articulo .nota-destacada {
+    max-width: none;
+}
+
+/* Texto que falta por escribir (quiénes somos) */
+.pendiente {
+    padding: 14px 16px;
+    border: 1px dashed var(--borde-fuerte);
+    border-radius: var(--radio-chico);
+    background-color: var(--campo);
+    color: var(--texto-tenue);
+    font-size: 15px;
+}
+
+/* Pie del artículo */
+.articulo-pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 20px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--borde);
+}
+
+.enlace-siguiente {
+    display: inline-flex;
+    flex-direction: column;
+    min-height: var(--toque);
+    justify-content: center;
+    color: var(--azul-marino);
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.enlace-siguiente small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--texto-tenue);
+}
+
+.enlace-siguiente:hover span {
+    text-decoration: underline;
+}
+
+.enlace-siguiente:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.fuente {
+    margin-top: 22px;
+    font-size: 13px;
+    color: var(--texto-tenue);
+    max-width: none;
+}
+
+@media (max-width: 650px) {
+    .cabecera .menu {
+        top: 0;
+        right: 18px;
+    }
+
+    .lista-iconos,
+    .figura-paneles {
+        grid-template-columns: 1fr;
+    }
+
+    .articulo-pie .boton-primario {
+        width: 100%;
     }
 }

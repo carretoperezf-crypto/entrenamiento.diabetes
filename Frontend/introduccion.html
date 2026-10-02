@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#16324F">
+
+    <title>Introducción · Predicción de riesgo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="pagina">
+
+        <header class="cabecera cabecera-info">
+
+            <nav class="menu" aria-label="Secciones informativas">
+
+                <button type="button" class="menu-boton" id="menuBoton"
+                    aria-expanded="false" aria-controls="menuPanel" aria-label="Abrir menú">
+                    <span class="menu-icono" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+
+                <ul class="menu-panel" id="menuPanel" hidden>
+                    <li><a href="introduccion.html" aria-current="page">Introducción</a></li>
+                    <li><a href="sintomas-causas.html">Síntomas y causas de la diabetes</a></li>
+                    <li><a href="prevencion.html">Prevención y factores de riesgo</a></li>
+                    <li><a href="tratamientos.html">Tratamientos</a></li>
+                    <li class="menu-aparte"><a href="quienes-somos.html">Quiénes somos</a></li>
+                </ul>
+
+            </nav>
+
+            <a class="enlace-inicio" href="inicio.html">
+                <span aria-hidden="true">←</span> Inicio
+            </a>
+
+            <h1>Introducción</h1>
+
+            <p class="cabecera-texto">
+                Qué es la diabetes tipo 2, por qué conviene detectarla a tiempo y con qué estudios se confirma.
+            </p>
+
+        </header>
+
+        <main class="contenedor">
+
+            <article class="articulo">
+
+                <section>
+                    <h2>Qué es la diabetes tipo 2</h2>
+                    <p>
+                        Es una enfermedad en la que el azúcar de la sangre, llamada glucosa,
+                        se mantiene por encima de lo normal.
+                    </p>
+                    <p>
+                        La glucosa viene de lo que comes y es el principal combustible del cuerpo.
+                        Para pasar de la sangre al interior de las células necesita insulina, una hormona.
+                        En la diabetes tipo 2 el cuerpo fabrica poca insulina o no la aprovecha bien,
+                        así que la glucosa se queda en la sangre en lugar de llegar a las células.
+                    </p>
+
+                    <figure class="figura">
+                        <div class="figura-paneles">
+                            <div class="panel">
+                                <svg viewBox="0 0 320 200" role="img" aria-label="Ilustración: la insulina abre el paso y la glucosa entra de la sangre a la célula."><rect class="il-fondo" width="320" height="200"/><rect class="il-sangre" width="320" height="72"/><path class="il-sangre-borde" d="M0 72h320"/><rect class="il-celula" x="36" y="104" width="248" height="82" rx="30"/>
+<rect class="il-puerta-abierta" x="144" y="98" width="32" height="12"/>
+<circle class="il-glucosa" cx="60" cy="36" r="7"/><circle class="il-glucosa" cx="250" cy="30" r="7"/><circle class="il-glucosa" cx="160" cy="52" r="7"/>
+<path class="il-flecha" d="M160 66v34M152 92l8 9 8-9"/>
+<rect class="il-insulina" x="126" y="86" width="12" height="12" transform="rotate(45 132 92)"/><rect class="il-insulina" x="184" y="86" width="12" height="12" transform="rotate(45 190 92)"/>
+<circle class="il-glucosa" cx="86" cy="136" r="7"/><circle class="il-glucosa" cx="122" cy="160" r="7"/><circle class="il-glucosa" cx="160" cy="134" r="7"/><circle class="il-glucosa" cx="196" cy="160" r="7"/><circle class="il-glucosa" cx="232" cy="138" r="7"/><circle class="il-glucosa" cx="160" cy="166" r="7"/></svg>
+                                <p class="panel-texto">
+                                    <strong>Sin diabetes</strong>
+                                    La insulina abre el paso y la glucosa entra a la célula.
+                                </p>
+                            </div>
+                            <div class="panel">
+                                <svg viewBox="0 0 320 200" role="img" aria-label="Ilustración: la célula no responde a la insulina y la glucosa se acumula en la sangre."><rect class="il-fondo" width="320" height="200"/><rect class="il-sangre" width="320" height="72"/><path class="il-sangre-borde" d="M0 72h320"/><rect class="il-celula" x="36" y="104" width="248" height="82" rx="30"/>
+<rect class="il-puerta-cerrada" x="142" y="100" width="36" height="8" rx="2"/>
+<circle class="il-glucosa" cx="34" cy="30" r="7"/><circle class="il-glucosa" cx="70" cy="50" r="7"/><circle class="il-glucosa" cx="104" cy="26" r="7"/><circle class="il-glucosa" cx="136" cy="48" r="7"/><circle class="il-glucosa" cx="172" cy="24" r="7"/><circle class="il-glucosa" cx="204" cy="50" r="7"/><circle class="il-glucosa" cx="238" cy="28" r="7"/><circle class="il-glucosa" cx="272" cy="48" r="7"/><circle class="il-glucosa" cx="296" cy="22" r="7"/>
+<path class="il-bloqueo" d="M152 78l16 14M168 78l-16 14"/>
+<rect class="il-insulina-tenue" x="116" y="86" width="12" height="12" transform="rotate(45 122 92)"/><rect class="il-insulina-tenue" x="194" y="86" width="12" height="12" transform="rotate(45 200 92)"/>
+<circle class="il-glucosa" cx="160" cy="150" r="7"/></svg>
+                                <p class="panel-texto">
+                                    <strong>Con diabetes tipo 2</strong>
+                                    La célula no responde a la insulina y la glucosa se acumula en la sangre.
+                                </p>
+                            </div>
+                        </div>
+                        <figcaption class="leyenda">
+                            <span><i class="l-sangre"></i> Sangre</span>
+                            <span><i class="l-celula"></i> Célula</span>
+                            <span><i class="l-glucosa"></i> Glucosa</span>
+                            <span><i class="l-insulina"></i> Insulina</span>
+                        </figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2>Por qué importa</h2>
+                    <p>
+                        Si la glucosa pasa años elevada, termina por causar otros problemas de salud.
+                        La buena noticia es que la diabetes se puede controlar, y con ese control
+                        es posible evitar o retrasar esas complicaciones.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Cómo se diagnostica</h2>
+                    <p>
+                        El diagnóstico se hace con análisis de sangre que indica un profesional de la salud:
+                    </p>
+                    <ul class="lista-puntos">
+                        <li><strong>Hemoglobina glucosilada (A1c).</strong> Refleja el promedio de glucosa de los últimos 3 meses.</li>
+                        <li><strong>Glucosa en ayunas.</strong> Mide la glucosa del momento, después de al menos 8 horas sin comer ni beber nada más que agua.</li>
+                        <li><strong>Glucosa al azar.</strong> También mide la glucosa del momento, pero sin ayuno. Se usa cuando ya hay síntomas y no conviene esperar.</li>
+                    </ul>
+                    <p class="nota-destacada">
+                        La herramienta de esta página estima el riesgo, pero no diagnostica.
+                        Solo estos estudios pueden confirmar si hay diabetes.
+                    </p>
+                </section>
+
+                <footer class="articulo-pie">
+                    <a class="enlace-siguiente" href="sintomas-causas.html">
+                        <small>Siguiente</small>
+                        <span>Síntomas y causas de la diabetes</span>
+                    </a>
+                    <a class="boton-primario" href="index.html">Calcular mi riesgo</a>
+                </footer>
+
+                <p class="fuente">
+                    Información adaptada de
+                    <a href="https://medlineplus.gov/spanish/diabetestype2.html" target="_blank" rel="noopener">MedlinePlus en español: Diabetes tipo 2</a>
+                    (Biblioteca Nacional de Medicina de EE. UU.), actualizado el 19 de mayo de 2026.
+                    Esta página es informativa y no sustituye una consulta médica.
+                </p>
+
+            </article>
+
+        </main>
+
+    </div>
+
+    <script src="menu.js"></script>
+
+</body>
+
+</html>
