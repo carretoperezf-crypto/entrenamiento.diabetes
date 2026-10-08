@@ -75,10 +75,6 @@
 
                 </fieldset>
 
-
-                <!-- ==========================================
-                     MEDIDAS CORPORALES
-                =========================================== -->
                 <fieldset class="seccion">
 
                     <legend>Medidas corporales</legend>
@@ -117,10 +113,6 @@
 
                 </fieldset>
 
-
-                <!-- ==========================================
-                     ANTECEDENTES FAMILIARES
-                =========================================== -->
                 <fieldset class="seccion">
 
                     <legend>Antecedentes familiares</legend>
@@ -128,7 +120,7 @@
                     <div class="campos campos-2">
 
                         <fieldset class="campo campo-opciones">
-                            <legend>¿Algún familiar directo tiene diabetes?</legend>
+                            <legend>¿Tiene algún familiar directo que tiene diabetes?</legend>
                             <div class="segmentado">
                                 <label>
                                     <input type="radio" name="antecedente_diabetes_familiar" value="0" required>
@@ -142,7 +134,7 @@
                         </fieldset>
 
                         <fieldset class="campo campo-opciones">
-                            <legend>¿Algún familiar directo tiene hipertensión?</legend>
+                            <legend>¿Tiene algún familiar directo que tiene hipertensión?</legend>
                             <div class="segmentado">
                                 <label>
                                     <input type="radio" name="antecedente_hipertension_familiar" value="0" required>
@@ -159,10 +151,6 @@
 
                 </fieldset>
 
-
-                <!-- ==========================================
-                     SALUD Y HÁBITOS
-                =========================================== -->
                 <fieldset class="seccion">
 
                     <legend>Salud y hábitos</legend>
@@ -184,7 +172,7 @@
                         </fieldset>
 
                         <fieldset class="campo campo-opciones">
-                            <legend>¿Hace actividad física?</legend>
+                            <legend>¿Realiza alguna actividad física?</legend>
                             <div class="segmentado">
                                 <label>
                                     <input type="radio" name="actividad_fisica" value="0" required>
@@ -198,7 +186,7 @@
                         </fieldset>
 
                         <fieldset class="campo campo-opciones">
-                            <legend>¿Fuma?</legend>
+                            <legend>¿Fuma constantemente?</legend>
                             <div class="segmentado">
                                 <label>
                                     <input type="radio" name="tabaquismo" value="0" required>
@@ -217,16 +205,11 @@
 
                 <p class="formulario-aviso" id="formularioAviso" role="alert" hidden></p>
 
-                <!-- Botón fijo en la parte inferior en móvil -->
                 <div class="acciones-formulario">
                     <button type="submit" class="boton-enviar">
                         Calcular riesgo
                     </button>
                 </div>
-
-            <!-- ==========================================
-                 RESULTADO
-            =========================================== -->
             <div id="resultado" class="resultado" aria-live="polite"></div>
 
         </main>

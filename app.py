@@ -6,11 +6,9 @@ import requests
 import math
 import os
 
-# Carpeta donde está este archivo (para que las rutas funcionen
-# sin importar desde dónde se ejecute app.py)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Flask sirve la carpeta static/ (index.html, inicio.html, script.js, style.css)
+
 app = Flask(
     __name__,
     static_folder=os.path.join(BASE_DIR, "Frontend"),
@@ -18,7 +16,7 @@ app = Flask(
 )
 CORS(app)
 
-# Mostrar acentos tal cual en las respuestas JSON
+
 try:
     app.json.ensure_ascii = False
 except AttributeError:
@@ -64,11 +62,7 @@ def predecir():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-
-# ==========================================
 # HOSPITALES CERCANOS
-# ==========================================
-
 SERVIDORES_OVERPASS = [
     "https://overpass-api.de/api/interpreter",
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
@@ -131,7 +125,6 @@ def hospitales():
         out center tags;
         """
 
-        # Probar cada servidor hasta que uno responda
         datos = None
         errores = []
 
