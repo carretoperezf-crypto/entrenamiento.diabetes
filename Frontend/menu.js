@@ -1,8 +1,3 @@
-// ==========================================
-// Menú de tres rayitas
-// Abre y cierra la lista de secciones.
-// ==========================================
-
 (function () {
 
     const boton = document.getElementById("menuBoton");
@@ -11,6 +6,8 @@
     if (!boton || !panel) {
         return;
     }
+
+    const escritorio = window.matchMedia("(min-width: 961px)");
 
     function abrir() {
         panel.hidden = false;
@@ -24,7 +21,17 @@
         boton.setAttribute("aria-label", "Abrir menú");
     }
 
-    boton.addEventListener("click", function () {
+    function ajustar() {
+        if (escritorio.matches) {
+            panel.hidden = false;
+            boton.setAttribute("aria-expanded", "false");
+        } else {
+            cerrar();
+        }
+    }
+
+    boton.addEventListener("click", function (event) {
+        event.stopPropagation();
         if (panel.hidden) {
             abrir();
         } else {
@@ -32,19 +39,23 @@
         }
     });
 
-    // Cerrar al tocar fuera del menú
+    // Cerrar al tocar fuera del menú (solo en celular)
     document.addEventListener("click", function (event) {
-        if (!panel.hidden && !event.target.closest(".menu")) {
+        if (escritorio.matches || panel.hidden) return;
+        if (!event.target.closest(".menu, #menuBoton")) {
             cerrar();
         }
     });
 
     // Cerrar con la tecla Escape y devolver el foco al botón
     document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !panel.hidden) {
+        if (event.key === "Escape" && !escritorio.matches && !panel.hidden) {
             cerrar();
             boton.focus();
         }
     });
+
+    escritorio.addEventListener("change", ajustar);
+    ajustar();
 
 })();

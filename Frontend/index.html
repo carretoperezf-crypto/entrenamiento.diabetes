@@ -4,219 +4,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#16324F">
+    <meta name="theme-color" content="#0D0F2B">
 
-    <title>Datos del paciente · Predicción de riesgo</title>
+    <title>Datos del paciente · Predicción de diabetes</title>
+
+    <link rel="icon" type="image/svg+xml" href="icono.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
 
-    <div class="pagina">
+    <div class="app">
 
-        <header class="cabecera">
+        <aside class="panel">
 
-            <a class="enlace-inicio" href="inicio.html">
-                <span aria-hidden="true">←</span> Inicio
-            </a>
+            <div class="panel-superior">
 
-            <h1>Datos del paciente</h1>
+                <a class="marca" href="inicio.html" aria-label="Predicción de diabetes, ir al inicio">
+                    <svg class="marca-gota" viewBox="0 0 410 470" aria-hidden="true">
+                        <path class="gota" d="M165 0C110 68 3 200 3 305a162 162 0 0 0 324 0C327 200 220 68 165 0Z"/>
+                        <path class="gota-linea" d="M54 368 113 305 185 335"/>
+                        <circle class="gota-nodo" cx="54" cy="368" r="18"/>
+                        <circle class="gota-nodo" cx="113" cy="305" r="18"/>
+                        <circle class="gota-nodo" cx="185" cy="335" r="18"/>
+                        <g class="gota-senal">
+                            <circle cx="209" cy="305" r="9"/>
+                            <circle cx="234" cy="275" r="9"/>
+                            <circle cx="258" cy="246" r="9"/>
+                            <circle cx="282" cy="217" r="9"/>
+                            <circle cx="307" cy="188" r="9"/>
+                            <circle cx="331" cy="159" r="9"/>
+                            <circle class="gota-halo" cx="357" cy="129" r="49"/>
+                            <circle cx="357" cy="129" r="27"/>
+                        </g>
+                    </svg>
+                    <span class="marca-texto">
+                        <strong>Predicción</strong>
+                        <span>de diabetes</span>
+                    </span>
+                </a>
 
-            <p class="cabecera-texto">
-                Completa los datos para estimar el riesgo de diabetes tipo 2.
-                Toma menos de un minuto.
+                <a class="enlace-inicio" href="inicio.html">Inicio</a>
+
+            </div>
+
+            <div class="panel-intro">
+                <h1>Datos del paciente</h1>
+                <p>
+                    Completa los datos para estimar el riesgo de diabetes tipo 2.
+                    Toma menos de un minuto.
+                </p>
+            </div>
+
+            <div class="avance">
+                <ol class="pasos" id="pasos">
+                    <li class="paso" data-paso="personales"><span class="paso-nodo"></span><span class="paso-texto">Datos personales</span></li>
+                    <li class="paso" data-paso="medidas"><span class="paso-nodo"></span><span class="paso-texto">Medidas corporales</span></li>
+                    <li class="paso" data-paso="antecedentes"><span class="paso-nodo"></span><span class="paso-texto">Antecedentes familiares</span></li>
+                    <li class="paso" data-paso="habitos"><span class="paso-nodo"></span><span class="paso-texto">Salud y hábitos</span></li>
+                    <li class="paso paso-final" data-paso="resultado"><span class="paso-nodo"></span><span class="paso-texto">Resultado</span></li>
+                </ol>
+                <p class="pasos-contador" id="pasosContador" aria-live="polite">0 de 4 secciones completas</p>
+            </div>
+
+            <p class="panel-aviso">
+                La estimación es orientativa y no sustituye la valoración
+                de un profesional de la salud.
             </p>
 
-        </header>
+        </aside>
 
-        <main class="contenedor">
+        <main class="contenido">
 
-            <form id="formularioPaciente" novalidate>
+            <div class="contenedor">
 
-                <!-- ==========================================
-                     DATOS PERSONALES
-                =========================================== -->
-                <fieldset class="seccion">
+                <form id="formularioPaciente" class="hoja" novalidate>
 
-                    <legend>Datos personales</legend>
+                    <!-- 1. DATOS PERSONALES -->
+                    <fieldset class="seccion" data-paso="personales">
 
-                    <div class="campos campos-2">
+                        <legend><span class="seccion-num">1</span>Datos personales</legend>
 
-                        <fieldset class="campo campo-opciones">
-                            <legend>Sexo</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="sexo" value="0" required>
-                                    <span>Femenino</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="sexo" value="1">
-                                    <span>Masculino</span>
-                                </label>
+                        <div class="campos campos-2">
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>Sexo</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="sexo" value="0" required>
+                                        <span>Femenino</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="sexo" value="1">
+                                        <span>Masculino</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <div class="campo">
+                                <label for="edad">Edad</label>
+                                <div class="con-unidad">
+                                    <input type="number" id="edad" name="edad" inputmode="numeric"
+                                        min="1" max="120" placeholder="45" required>
+                                    <span class="unidad">años</span>
+                                </div>
                             </div>
-                        </fieldset>
 
-                        <div class="campo">
-                            <label for="edad">Edad</label>
-                            <div class="con-unidad">
-                                <input type="number" id="edad" name="edad" inputmode="numeric"
-                                    min="1" max="120" placeholder="45" required>
-                                <span class="unidad">años</span>
-                            </div>
                         </div>
 
-                    </div>
+                    </fieldset>
 
-                </fieldset>
+                    <!-- 2. MEDIDAS CORPORALES -->
+                    <fieldset class="seccion" data-paso="medidas">
 
-                <fieldset class="seccion">
+                        <legend><span class="seccion-num">2</span>Medidas corporales</legend>
 
-                    <legend>Medidas corporales</legend>
+                        <div class="campos campos-2">
 
-                    <div class="campos campos-2">
-
-                        <div class="campo">
-                            <label for="peso">Peso</label>
-                            <div class="con-unidad">
-                                <input type="number" id="peso" name="peso" inputmode="decimal"
-                                    step="0.01" min="1" max="400" placeholder="72.5" required>
-                                <span class="unidad">kg</span>
+                            <div class="campo">
+                                <label for="peso">Peso</label>
+                                <div class="con-unidad">
+                                    <input type="number" id="peso" name="peso" inputmode="decimal"
+                                        step="0.01" min="1" max="400" placeholder="72.5" required>
+                                    <span class="unidad">kg</span>
+                                </div>
                             </div>
+
+                            <div class="campo">
+                                <label for="estatura">Estatura</label>
+                                <div class="con-unidad">
+                                    <input type="number" id="estatura" name="estatura" inputmode="decimal"
+                                        step="0.01" min="50" max="250" placeholder="168" required>
+                                    <span class="unidad">cm</span>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <div class="campo">
-                            <label for="estatura">Estatura</label>
-                            <div class="con-unidad">
-                                <input type="number" id="estatura" name="estatura" inputmode="decimal"
-                                    step="0.01" min="50" max="250" placeholder="168" required>
-                                <span class="unidad">cm</span>
-                            </div>
+                        <!-- IMC calculado automáticamente -->
+                        <div class="imc" id="imcPanel" data-estado="vacio">
+                            <label for="imc" class="imc-etiqueta">Índice de masa corporal (IMC)</label>
+                            <input type="text" id="imc" name="imc" class="imc-valor"
+                                placeholder="—" readonly tabindex="-1" aria-describedby="imcAyuda">
+                            <p id="imcAyuda" class="imc-ayuda" aria-live="polite">
+                                Se calcula con el peso y la estatura.
+                            </p>
                         </div>
 
+                    </fieldset>
+
+                    <!-- 3. ANTECEDENTES FAMILIARES -->
+                    <fieldset class="seccion" data-paso="antecedentes">
+
+                        <legend><span class="seccion-num">3</span>Antecedentes familiares</legend>
+
+                        <div class="campos campos-1">
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>¿Algún familiar directo tiene diabetes?</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="antecedente_diabetes_familiar" value="0" required>
+                                        <span>No</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="antecedente_diabetes_familiar" value="1">
+                                        <span>Sí</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>¿Algún familiar directo tiene hipertensión?</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="antecedente_hipertension_familiar" value="0" required>
+                                        <span>No</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="antecedente_hipertension_familiar" value="1">
+                                        <span>Sí</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+                    </fieldset>
+
+                    <!-- 4. SALUD Y HÁBITOS -->
+                    <fieldset class="seccion" data-paso="habitos">
+
+                        <legend><span class="seccion-num">4</span>Salud y hábitos</legend>
+
+                        <div class="campos campos-1">
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>¿Tiene hipertensión?</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="hipertension" value="0" required>
+                                        <span>No</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="hipertension" value="1">
+                                        <span>Sí</span>
+                                    </label>
+                                    <!-- Solo se muestra cuando el sexo es Femenino -->
+                                    <label id="opcionEmbarazo" class="opcion-embarazo" hidden>
+                                        <input type="radio" name="hipertension" value="2" disabled>
+                                        <span>Sí, durante el embarazo</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>¿Con qué frecuencia realiza actividad física?</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="actividad_fisica" value="0" required>
+                                        <span>Nunca</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="actividad_fisica" value="1">
+                                        <span>A veces</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="actividad_fisica" value="2">
+                                        <span>Seguido</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="campo campo-opciones">
+                                <legend>¿Fuma?</legend>
+                                <div class="segmentado">
+                                    <label>
+                                        <input type="radio" name="tabaquismo" value="0" required>
+                                        <span>No</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="tabaquismo" value="1">
+                                        <span>A veces</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="tabaquismo" value="2">
+                                        <span>Diariamente</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+                    </fieldset>
+
+                    <p class="formulario-aviso" id="formularioAviso" role="alert" hidden></p>
+
+                    <div class="acciones-formulario">
+                        <button type="submit" class="boton-enviar">
+                            Calcular riesgo
+                        </button>
                     </div>
 
-                    <!-- IMC calculado automáticamente -->
-                    <div class="imc" id="imcPanel" data-estado="vacio">
-                        <label for="imc" class="imc-etiqueta">IMC</label>
-                        <input type="text" id="imc" name="imc" class="imc-valor"
-                            placeholder="—" readonly tabindex="-1" aria-describedby="imcAyuda">
-                        <p id="imcAyuda" class="imc-ayuda" aria-live="polite">
-                            Se calcula con el peso y la estatura.
-                        </p>
-                    </div>
+                </form>
 
-                </fieldset>
+                <div id="resultado" class="resultado" aria-live="polite"></div>
 
-                <fieldset class="seccion">
-
-                    <legend>Antecedentes familiares</legend>
-
-                    <div class="campos campos-2">
-
-                        <fieldset class="campo campo-opciones">
-                            <legend>¿Tiene algún familiar directo que tiene diabetes?</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="antecedente_diabetes_familiar" value="0" required>
-                                    <span>No</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="antecedente_diabetes_familiar" value="1">
-                                    <span>Sí</span>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="campo campo-opciones">
-                            <legend>¿Tiene algún familiar directo que tiene hipertensión?</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="antecedente_hipertension_familiar" value="0" required>
-                                    <span>No</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="antecedente_hipertension_familiar" value="1">
-                                    <span>Sí</span>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                    </div>
-
-                </fieldset>
-
-                <fieldset class="seccion">
-
-                    <legend>Salud y hábitos</legend>
-
-                    <div class="campos campos-3">
-
-                        <fieldset class="campo campo-opciones">
-                            <legend>¿Tiene hipertensión?</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="hipertension" value="0" required>
-                                    <span>No</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="hipertension" value="1">
-                                    <span>Sí</span>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="campo campo-opciones">
-                            <legend>¿Realiza alguna actividad física?</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="actividad_fisica" value="0" required>
-                                    <span>No</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="actividad_fisica" value="1">
-                                    <span>Sí</span>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="campo campo-opciones">
-                            <legend>¿Fuma constantemente?</legend>
-                            <div class="segmentado">
-                                <label>
-                                    <input type="radio" name="tabaquismo" value="0" required>
-                                    <span>No</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="tabaquismo" value="1">
-                                    <span>Sí</span>
-                                </label>
-                            </div>
-                        </fieldset>
-
-                    </div>
-
-                </fieldset>
-
-                <p class="formulario-aviso" id="formularioAviso" role="alert" hidden></p>
-
-                <div class="acciones-formulario">
-                    <button type="submit" class="boton-enviar">
-                        Calcular riesgo
-                    </button>
-                </div>
-            <div id="resultado" class="resultado" aria-live="polite"></div>
+            </div>
 
         </main>
 
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
 
 </body>
 </html>

@@ -4,24 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#16324F">
+    <meta name="theme-color" content="#0D0F2B">
 
-    <title>Predicción de riesgo</title>
+    <title>Predicción de diabetes</title>
+
+    <link rel="icon" type="image/svg+xml" href="icono.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
 
-    <div class="pagina pagina-inicio">
+    <div class="app">
 
-        <main class="inicio">
+        <!-- ==========================================
+             PANEL DE MARCA Y NAVEGACIÓN
+        =========================================== -->
+        <aside class="panel panel-nav">
 
-            <nav class="menu" aria-label="Secciones informativas">
+            <div class="panel-superior">
+
+                <a class="marca" href="inicio.html" aria-label="Predicción de diabetes, ir al inicio">
+                    <svg class="marca-gota" viewBox="0 0 410 470" aria-hidden="true">
+                        <path class="gota" d="M165 0C110 68 3 200 3 305a162 162 0 0 0 324 0C327 200 220 68 165 0Z"/>
+                        <path class="gota-linea" d="M54 368 113 305 185 335"/>
+                        <circle class="gota-nodo" cx="54" cy="368" r="18"/>
+                        <circle class="gota-nodo" cx="113" cy="305" r="18"/>
+                        <circle class="gota-nodo" cx="185" cy="335" r="18"/>
+                        <g class="gota-senal">
+                            <circle cx="209" cy="305" r="9"/>
+                            <circle cx="234" cy="275" r="9"/>
+                            <circle cx="258" cy="246" r="9"/>
+                            <circle cx="282" cy="217" r="9"/>
+                            <circle cx="307" cy="188" r="9"/>
+                            <circle cx="331" cy="159" r="9"/>
+                            <circle class="gota-halo" cx="357" cy="129" r="49"/>
+                            <circle cx="357" cy="129" r="27"/>
+                        </g>
+                    </svg>
+                    <span class="marca-texto">
+                        <strong>Predicción</strong>
+                        <span>de diabetes</span>
+                    </span>
+                </a>
 
                 <button type="button" class="menu-boton" id="menuBoton"
                     aria-expanded="false" aria-controls="menuPanel" aria-label="Abrir menú">
@@ -32,44 +62,94 @@
                     </span>
                 </button>
 
-                <ul class="menu-panel" id="menuPanel" hidden>
-                    <li><a href="introduccion.html">¿Qué es la diabetes tipo 2?</a></li>
-                    <li><a href="sintomas_causas.html">Síntomas y causas de la diabetes</a></li>
-                    <li><a href="prevencion.html">Prevención y factores de riesgo</a></li>
-                    <li><a href="tratamientos.html">Tratamientos</a></li>
-                    <li class="menu-aparte"><a href="quienes_somos.html">Quiénes somos</a></li>
-                </ul>
-
-            </nav>
-
-            <p class="cabecera-etiqueta">Herramienta clínica de apoyo</p>
-            <h1 class="inicio-titulo">Predicción de riesgo</h1>
-            <p class="inicio-texto">
-                Estima el riesgo de diabetes tipo 2 a partir de datos personales,
-                medidas corporales, antecedentes familiares y hábitos.
-            </p>
-
-            <div class="inicio-requisitos">
-                <p class="inicio-requisitos-titulo">Antes de comenzar, ten a la mano:</p>
-                <ul>
-                    <li>Sexo y edad del paciente</li>
-                    <li>Peso y estatura</li>
-                    <li>Antecedentes familiares de diabetes e hipertensión</li>
-                    <li>Si tiene hipertensión, hace actividad física o fuma</li>
-                </ul>
             </div>
 
-            <a class="boton-primario" href="index.html">Comenzar</a>
+            <nav class="menu" aria-label="Secciones">
+                <div class="menu-panel" id="menuPanel" hidden>
+                    <ol class="pasos ruta">
+                        <li class="paso"><a href="introduccion.html"><span class="paso-nodo"></span><span class="paso-texto">Introducción</span></a></li>
+                        <li class="paso"><a href="sintomas_causas.html"><span class="paso-nodo"></span><span class="paso-texto">Síntomas y causas</span></a></li>
+                        <li class="paso"><a href="prevencion.html"><span class="paso-nodo"></span><span class="paso-texto">Prevención y factores de riesgo</span></a></li>
+                        <li class="paso"><a href="tratamientos.html"><span class="paso-nodo"></span><span class="paso-texto">Tratamientos</span></a></li>
+                        <li class="paso paso-final"><a href="index.html"><span class="paso-nodo"></span><span class="paso-texto">Calcular mi riesgo</span></a></li>
+                    </ol>
+                    <ul class="menu-extra">
+                        <li><a href="inicio.html" aria-current="page">Inicio</a></li>
+                        <li><a href="quienes_somos.html">Quiénes somos</a></li>
+                    </ul>
+                </div>
+            </nav>
 
-            <p class="inicio-aviso">
-                El resultado es orientativo y no sustituye una consulta médica.
+            <p class="panel-aviso">
+                La información y la estimación son orientativas y no sustituyen
+                la valoración de un profesional de la salud.
             </p>
+
+        </aside>
+
+        <main class="contenido">
+
+            <div class="contenedor">
+
+                <section class="portada">
+                    <h1>Estima el riesgo de diabetes tipo 2 en menos de un minuto</h1>
+                    <p class="portada-texto">
+                        Herramienta clínica de apoyo que estima el riesgo a partir de datos personales,
+                        medidas corporales, antecedentes familiares y hábitos.
+                    </p>
+                    <div class="portada-acciones">
+                        <a class="boton-primario boton-grande" href="index.html">Comenzar</a>
+                        <p class="portada-aviso">El resultado es orientativo y no sustituye una consulta médica.</p>
+                    </div>
+                </section>
+
+                <section class="hoja requisitos" aria-labelledby="tituloRequisitos">
+                    <h2 id="tituloRequisitos">Antes de comenzar, ten a la mano</h2>
+                    <ol class="lista-acciones">
+                        <li><strong>Sexo y edad</strong> del paciente</li>
+                        <li><strong>Peso y estatura</strong></li>
+                        <li><strong>Antecedentes familiares</strong> de diabetes e hipertensión</li>
+                        <li><strong>Salud y hábitos:</strong> si tiene hipertensión, hace actividad física o fuma</li>
+                    </ol>
+                </section>
+
+                <section class="temas" aria-labelledby="tituloTemas">
+                    <h2 id="tituloTemas">Aprende sobre la diabetes</h2>
+                    <ul class="lista-temas">
+                        <li>
+                            <a class="tema" href="introduccion.html">
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 8.5 7.2 12 3z"/></svg></span>
+                                <span class="texto"><strong>¿Qué es la diabetes tipo 2?</strong>Qué es, por qué importa y cómo se diagnostica.</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="tema" href="sintomas_causas.html">
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/></svg></span>
+                                <span class="texto"><strong>Síntomas y causas</strong>Qué señales puede dar y qué la origina.</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="tema" href="prevencion.html">
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+                                <span class="texto"><strong>Prevención y factores de riesgo</strong>Qué puedes hacer y qué eleva el riesgo.</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="tema" href="tratamientos.html">
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg></span>
+                                <span class="texto"><strong>Tratamientos</strong>Cómo se controla una vez diagnosticada.</span>
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
 
         </main>
 
     </div>
 
-    <script src="menu.js"></script>
+    <script src="menu.js?v=3"></script>
 
 </body>
 

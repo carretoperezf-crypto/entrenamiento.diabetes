@@ -1,10 +1,3 @@
-// ==========================================
-// Configuración
-// ==========================================
-
-// Dirección del servidor Flask.
-// Vacía = mismo servidor que entrega esta página (Flask sirve la carpeta
-// static/). Así funciona igual en la computadora, por IP o por túnel HTTPS.
 const API_URL = "";
 
 const formulario = document.getElementById("formularioPaciente");
@@ -22,11 +15,7 @@ const reducirMovimiento =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
-// ==========================================
-// Utilidades
-// ==========================================
 
-// Evita que texto del servidor se interprete como HTML
 function esc(valor) {
     return String(valor ?? "").replace(/[&<>"']/g, (c) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -45,16 +34,20 @@ function desplazarA(elemento) {
 }
 
 
-// ==========================================
-// IMC automático
-// IMC = peso (kg) / estatura (m)²
-// ==========================================
-
 function categoriaIMC(imc) {
     if (imc < 18.5) return "Bajo peso";
-    if (imc < 25) return "Peso normal";
-    if (imc < 30) return "Sobrepeso";
-    return "Obesidad";
+    if (imc < 24.9) return "Peso normal";
+    if (imc < 29.9) return "Sobrepeso";
+    if (imc < 34.9) return "Obesidad clase 1";
+    if (imc < 39.9) return "Obesidad clase 2";
+    return "Obesidad clase 3";
+}
+
+function claveIMC(imc) {
+    if (imc < 18.5) return "bajo";
+    if (imc < 24.9) return "normal";
+    if (imc < 29.9) return "sobrepeso";
+    return "obesidad";
 }
 
 function calcularIMC() {
@@ -69,6 +62,7 @@ function calcularIMC() {
     if (!valido) {
         campoIMC.value = "";
         panelIMC.dataset.estado = "vacio";
+        delete panelIMC.dataset.categoria;
         ayudaIMC.textContent = "Se calcula con el peso y la estatura.";
         return null;
     }
@@ -78,6 +72,7 @@ function calcularIMC() {
 
     campoIMC.value = imc.toFixed(1);
     panelIMC.dataset.estado = "listo";
+    panelIMC.dataset.categoria = claveIMC(imc);
     ayudaIMC.textContent = categoriaIMC(imc);
 
     return imc;
@@ -86,12 +81,69 @@ function calcularIMC() {
 campoPeso.addEventListener("input", calcularIMC);
 campoEstatura.addEventListener("input", calcularIMC);
 
+const opcionEmbarazo = document.getElementById("opcionEmbarazo");
+const radioEmbarazo = opcionEmbarazo.querySelector("input");
 
-// ==========================================
-// Contenido por nivel de riesgo
-// Las acciones pueden ser texto fijo o una función que recibe el
-// perfil del paciente y devuelve texto (o null para omitirla).
-// ==========================================
+function actualizarOpcionEmbarazo() {
+    const sexo = formulario.querySelector('input[name="sexo"]:checked');
+    const esFemenino = sexo !== null && sexo.value === "0";
+
+    opcionEmbarazo.hidden = !esFemenino;
+    radioEmbarazo.disabled = !esFemenino;
+
+    // Si cambia a Masculino con esa opción marcada, se desmarca
+    if (!esFemenino && radioEmbarazo.checked) {
+        radioEmbarazo.checked = false;
+    }
+}
+
+formulario.querySelectorAll('input[name="sexo"]').forEach((radio) => {
+    radio.addEventListener("change", actualizarOpcionEmbarazo);
+});
+
+actualizarOpcionEmbarazo();
+
+
+const listaPasos = document.getElementById("pasos");
+const contadorPasos = document.getElementById("pasosContador");
+const secciones = [...formulario.querySelectorAll(".seccion[data-paso]")];
+
+function pasoDe(clave) {
+    return listaPasos.querySelector(`[data-paso="${clave}"]`);
+}
+
+function seccionCompleta(seccion) {
+    return [...seccion.querySelectorAll("input:not([readonly]):not([disabled])")]
+        .every((campo) => campo.validity.valid);
+}
+
+function actualizarAvance() {
+    let completas = 0;
+
+    secciones.forEach((seccion) => {
+        const completa = seccionCompleta(seccion);
+        pasoDe(seccion.dataset.paso).classList.toggle("completo", completa);
+        if (completa) completas++;
+    });
+
+    listaPasos.classList.toggle("listo", completas === secciones.length);
+    contadorPasos.textContent = completas === secciones.length
+        ? "Todo listo para calcular el riesgo"
+        : `${completas} de ${secciones.length} secciones completas`;
+}
+
+formulario.addEventListener("input", actualizarAvance);
+formulario.addEventListener("change", actualizarAvance);
+
+// Resalta la sección en la que está la persona
+formulario.addEventListener("focusin", (event) => {
+    const seccion = event.target.closest(".seccion[data-paso]");
+    if (!seccion) return;
+    listaPasos.querySelectorAll(".actual").forEach((p) => p.classList.remove("actual"));
+    pasoDe(seccion.dataset.paso).classList.add("actual");
+});
+
+actualizarAvance();
 
 const accionPeso = (p) => {
     if (p.imc < 25) return null;
@@ -109,9 +161,15 @@ const accionTabaco = (p) => p.fuma
     ? "Dejar de fumar reduce el riesgo de diabetes y de sus complicaciones. Pide apoyo en tu centro de salud."
     : null;
 
-const accionPresion = (p) => p.hipertension
-    ? "Sigue el tratamiento para la presión arterial: presión alta y diabetes juntas elevan mucho el riesgo del corazón."
-    : null;
+const accionPresion = (p) => {
+    if (p.hipertensionEmbarazo) {
+        return "Tuviste presión alta durante el embarazo: esto aumenta el riesgo de presión alta " +
+            "y diabetes más adelante. Mide tu presión y tu glucosa al menos una vez al año.";
+    }
+    return p.hipertension
+        ? "Sigue el tratamiento para la presión arterial: presión alta y diabetes juntas elevan mucho el riesgo del corazón."
+        : null;
+};
 
 const NIVELES = {
 
@@ -202,11 +260,6 @@ function resolverLista(lista, perfil) {
         .filter(Boolean);
 }
 
-
-// ==========================================
-// Pintar resultados
-// ==========================================
-
 function mostrarCargando() {
     resultado.className = "resultado cargando";
     resultado.innerHTML = `
@@ -288,6 +341,7 @@ function mostrarResultado(data, perfil) {
     }
 
     resultado.className = `resultado ${nivel.clase}`;
+    listaPasos.dataset.resultado = nivel.clase;
 
     resultado.innerHTML = `
         <article class="resultado-tarjeta">
@@ -371,15 +425,14 @@ function reiniciar() {
     formulario.reset();
     formulario.classList.remove("intentado");
     calcularIMC();
+    actualizarOpcionEmbarazo();
+    delete listaPasos.dataset.resultado;
+    listaPasos.querySelectorAll(".actual").forEach((p) => p.classList.remove("actual"));
+    actualizarAvance();
     resultado.className = "resultado";
     resultado.innerHTML = "";
     window.scrollTo({ top: 0, behavior: reducirMovimiento ? "auto" : "smooth" });
 }
-
-
-// ==========================================
-// Hospitales cercanos
-// ==========================================
 
 function obtenerUbicacion() {
     return new Promise((resolve) => {
@@ -536,10 +589,6 @@ async function buscarHospitales() {
 }
 
 
-// ==========================================
-// Envío del formulario
-// ==========================================
-
 formulario.addEventListener("submit", async function (event) {
 
     event.preventDefault();
@@ -572,7 +621,6 @@ formulario.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Datos para Flask (mismos nombres que espera el modelo)
     const datos = {
         sexo: valorOpcion("sexo"),
         edad: Number(document.getElementById("edad").value),
@@ -586,13 +634,14 @@ formulario.addEventListener("submit", async function (event) {
         tabaquismo: valorOpcion("tabaquismo")
     };
 
-    // Perfil usado para personalizar las recomendaciones
     const perfil = {
         imc: imcCalculado,
         peso: datos.peso,
-        activo: datos["actividad fisica"] === 1,
-        fuma: datos.tabaquismo === 1,
+        // Valores 0, 1 y 2 (ver opciones en index.html)
+        activo: datos["actividad fisica"] >= 1,
+        fuma: datos.tabaquismo >= 1,
         hipertension: datos.hipertension === 1,
+        hipertensionEmbarazo: datos.hipertension === 2,
         antecedenteDiabetes: datos["antecedente diabetes familiar"] === 1
     };
 
@@ -614,7 +663,6 @@ formulario.addEventListener("submit", async function (event) {
 
     } catch (error) {
 
-        // Error de red: el servidor no respondió
         console.error("Error de conexión:", error);
         mostrarError("No se pudo conectar con el servidor", [
             "Verifica que Flask esté en ejecución.",
@@ -633,7 +681,6 @@ formulario.addEventListener("submit", async function (event) {
     console.log("Respuesta de Flask:", data);
 
     if (!respuesta.ok) {
-        // El servidor respondió, pero con un error
         mostrarError("No se pudo calcular el riesgo", [
             data.error || `El servidor respondió con el código ${respuesta.status}.`
         ]);

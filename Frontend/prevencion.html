@@ -4,24 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#16324F">
+    <meta name="theme-color" content="#0D0F2B">
 
-    <title>Prevención y factores de riesgo · Predicción de riesgo</title>
+    <title>Prevención y factores de riesgo · Predicción de diabetes</title>
+
+    <link rel="icon" type="image/svg+xml" href="icono.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
 
-    <div class="pagina">
+    <div class="app">
 
-        <header class="cabecera cabecera-info">
+        <!-- ==========================================
+             PANEL DE MARCA Y NAVEGACIÓN
+        =========================================== -->
+        <aside class="panel panel-nav">
 
-            <nav class="menu" aria-label="Secciones informativas">
+            <div class="panel-superior">
+
+                <a class="marca" href="inicio.html" aria-label="Predicción de diabetes, ir al inicio">
+                    <svg class="marca-gota" viewBox="0 0 410 470" aria-hidden="true">
+                        <path class="gota" d="M165 0C110 68 3 200 3 305a162 162 0 0 0 324 0C327 200 220 68 165 0Z"/>
+                        <path class="gota-linea" d="M54 368 113 305 185 335"/>
+                        <circle class="gota-nodo" cx="54" cy="368" r="18"/>
+                        <circle class="gota-nodo" cx="113" cy="305" r="18"/>
+                        <circle class="gota-nodo" cx="185" cy="335" r="18"/>
+                        <g class="gota-senal">
+                            <circle cx="209" cy="305" r="9"/>
+                            <circle cx="234" cy="275" r="9"/>
+                            <circle cx="258" cy="246" r="9"/>
+                            <circle cx="282" cy="217" r="9"/>
+                            <circle cx="307" cy="188" r="9"/>
+                            <circle cx="331" cy="159" r="9"/>
+                            <circle class="gota-halo" cx="357" cy="129" r="49"/>
+                            <circle cx="357" cy="129" r="27"/>
+                        </g>
+                    </svg>
+                    <span class="marca-texto">
+                        <strong>Predicción</strong>
+                        <span>de diabetes</span>
+                    </span>
+                </a>
 
                 <button type="button" class="menu-boton" id="menuBoton"
                     aria-expanded="false" aria-controls="menuPanel" aria-label="Abrir menú">
@@ -32,87 +62,99 @@
                     </span>
                 </button>
 
-                <ul class="menu-panel" id="menuPanel" hidden>
-                    <li><a href="introduccion.html">Introducción</a></li>
-                    <li><a href="sintomas_causas.html">Síntomas y causas de la diabetes</a></li>
-                    <li><a href="prevencion.html" aria-current="page">Prevención y factores de riesgo</a></li>
-                    <li><a href="tratamientos.html">Tratamientos</a></li>
-                    <li class="menu-aparte"><a href="quienes_somos.html">Quiénes somos</a></li>
-                </ul>
+            </div>
 
+            <nav class="menu" aria-label="Secciones">
+                <div class="menu-panel" id="menuPanel" hidden>
+                    <ol class="pasos ruta">
+                        <li class="paso completo"><a href="introduccion.html"><span class="paso-nodo"></span><span class="paso-texto">Introducción</span></a></li>
+                        <li class="paso completo"><a href="sintomas_causas.html"><span class="paso-nodo"></span><span class="paso-texto">Síntomas y causas</span></a></li>
+                        <li class="paso completo actual"><a href="prevencion.html" aria-current="page"><span class="paso-nodo"></span><span class="paso-texto">Prevención y factores de riesgo</span></a></li>
+                        <li class="paso"><a href="tratamientos.html"><span class="paso-nodo"></span><span class="paso-texto">Tratamientos</span></a></li>
+                        <li class="paso paso-final"><a href="index.html"><span class="paso-nodo"></span><span class="paso-texto">Calcular mi riesgo</span></a></li>
+                    </ol>
+                    <ul class="menu-extra">
+                        <li><a href="inicio.html">Inicio</a></li>
+                        <li><a href="quienes_somos.html">Quiénes somos</a></li>
+                    </ul>
+                </div>
             </nav>
 
-            <a class="enlace-inicio" href="inicio.html">
-                <span aria-hidden="true">←</span> Inicio
-            </a>
-
-            <h1>Prevención y factores de riesgo</h1>
-
-            <p class="cabecera-texto">
-                Qué puedes hacer para prevenir o retrasar la diabetes tipo 2 y qué hace que el riesgo sea mayor.
+            <p class="panel-aviso">
+                La información y la estimación son orientativas y no sustituyen
+                la valoración de un profesional de la salud.
             </p>
 
-        </header>
+        </aside>
 
-        <main class="contenedor">
+        <main class="contenido">
 
-            <article class="articulo">
+            <div class="contenedor">
 
-                <section>
-                    <h2>Cómo prevenirla o retrasarla</h2>
-                    <p>
-                        La diabetes tipo 2 se puede prevenir o, al menos, retrasar. Estas medidas ayudan:
-                    </p>
-                    <ul class="lista-iconos con-detalle">
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
-                            <span class="texto"><strong>Bajar de peso</strong>Si tienes sobrepeso.</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8c-2-1.6-6-1-6 4 0 4 2.5 8 4.5 8 .8 0 1-.5 1.5-.5s.7.5 1.5.5c2 0 4.5-4 4.5-8 0-5-4-5.6-6-4z"/><path d="M12 8c0-1.8.8-3.5 2.5-4"/></svg></span>
-                            <span class="texto"><strong>Comer menos calorías</strong></span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
-                            <span class="texto"><strong>Moverte más</strong>Aumentar la actividad física.</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v3a4 4 0 0 0 8 0v-1"/><circle cx="18" cy="13" r="2"/></svg></span>
-                            <span class="texto"><strong>Atender otras condiciones</strong>Controlar las que elevan el riesgo, como la presión alta.</span>
-                        </li>
-                    </ul>
-                </section>
+                <header class="articulo-cabecera">
+                    <h1>Prevención y factores de riesgo</h1>
+                    <p class="articulo-intro">Qué puedes hacer para prevenir o retrasar la diabetes tipo 2 y qué hace que el riesgo sea mayor.</p>
+                </header>
 
-                <section>
-                    <h2>Factores de riesgo</h2>
-                    <p>
-                        La probabilidad de desarrollar diabetes tipo 2 es mayor si:
-                    </p>
-                    <ul class="lista-puntos">
-                        <li><strong>Tienes más de 45 años.</strong> Puede aparecer en niños, adolescentes y adultos jóvenes, pero es más frecuente a partir de la mediana edad.</li>
-                        <li><strong>Tienes prediabetes.</strong> La glucosa está alta, pero todavía no al nivel de la diabetes.</li>
-                        <li><strong>Tuviste diabetes en el embarazo</strong> o un bebé que pesó 4 kg (9 libras) o más al nacer.</li>
-                        <li><strong>Hay diabetes en tu familia.</strong></li>
-                        <li><strong>Tienes sobrepeso u obesidad.</strong></li>
-                        <li><strong>No haces ejercicio.</strong></li>
-                        <li><strong>Eres hispano o latino,</strong> afroamericano, indígena americano, asiático americano o de las islas del Pacífico.</li>
-                        <li><strong>Tienes otros padecimientos:</strong> presión arterial alta, enfermedad del corazón, derrame cerebral, síndrome de ovario poliquístico o depresión.</li>
-                        <li><strong>Tienes el colesterol bueno (HDL) bajo</strong> y los triglicéridos altos.</li>
-                        <li><strong>Tienes acantosis nigricans:</strong> piel oscura, gruesa y aterciopelada en el cuello o las axilas.</li>
-                    </ul>
-                    <p class="nota-destacada">
-                        Varios de estos factores, como la edad, el peso, los antecedentes familiares,
-                        la presión alta y la actividad física, son los datos que pide la herramienta para estimar tu riesgo.
-                    </p>
-                </section>
+                <article class="articulo hoja">
 
-                <footer class="articulo-pie">
-                    <a class="enlace-siguiente" href="tratamientos.html">
-                        <small>Siguiente</small>
-                        <span>Tratamientos</span>
-                    </a>
-                    <a class="boton-primario" href="index.html">Calcular mi riesgo</a>
-                </footer>
+                    <section>
+                        <h2>Cómo prevenirla o retrasarla</h2>
+                        <p>
+                            La diabetes tipo 2 se puede prevenir o, al menos, retrasar. Estas medidas ayudan:
+                        </p>
+                        <ul class="lista-iconos con-detalle">
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
+                                <span class="texto"><strong>Bajar de peso</strong>Si tienes sobrepeso.</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8c-2-1.6-6-1-6 4 0 4 2.5 8 4.5 8 .8 0 1-.5 1.5-.5s.7.5 1.5.5c2 0 4.5-4 4.5-8 0-5-4-5.6-6-4z"/><path d="M12 8c0-1.8.8-3.5 2.5-4"/></svg></span>
+                                <span class="texto"><strong>Comer menos calorías</strong></span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+                                <span class="texto"><strong>Moverte más</strong>Aumentar la actividad física.</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v3a4 4 0 0 0 8 0v-1"/><circle cx="18" cy="13" r="2"/></svg></span>
+                                <span class="texto"><strong>Atender otras condiciones</strong>Controlar las que elevan el riesgo, como la presión alta.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Factores de riesgo</h2>
+                        <p>
+                            La probabilidad de desarrollar diabetes tipo 2 es mayor si:
+                        </p>
+                        <ul class="lista-puntos">
+                            <li><strong>Tienes más de 45 años.</strong> Puede aparecer en niños, adolescentes y adultos jóvenes, pero es más frecuente a partir de la mediana edad.</li>
+                            <li><strong>Tienes prediabetes.</strong> La glucosa está alta, pero todavía no al nivel de la diabetes.</li>
+                            <li><strong>Tuviste diabetes en el embarazo</strong> o un bebé que pesó 4 kg (9 libras) o más al nacer.</li>
+                            <li><strong>Hay diabetes en tu familia.</strong></li>
+                            <li><strong>Tienes sobrepeso u obesidad.</strong></li>
+                            <li><strong>No haces ejercicio.</strong></li>
+                            <li><strong>Eres hispano o latino,</strong> afroamericano, indígena americano, asiático americano o de las islas del Pacífico.</li>
+                            <li><strong>Tienes otros padecimientos:</strong> presión arterial alta, enfermedad del corazón, derrame cerebral, síndrome de ovario poliquístico o depresión.</li>
+                            <li><strong>Tienes el colesterol bueno (HDL) bajo</strong> y los triglicéridos altos.</li>
+                            <li><strong>Tienes acantosis nigricans:</strong> piel oscura, gruesa y aterciopelada en el cuello o las axilas.</li>
+                        </ul>
+                        <p class="nota-destacada">
+                            Varios de estos factores, como la edad, el peso, los antecedentes familiares,
+                            la presión alta y la actividad física, son los datos que pide la herramienta para estimar tu riesgo.
+                        </p>
+                    </section>
+
+                    <footer class="articulo-pie">
+                        <a class="enlace-siguiente" href="tratamientos.html">
+                            <small>Siguiente</small>
+                            <span>Tratamientos</span>
+                        </a>
+                        <a class="boton-primario" href="index.html">Calcular mi riesgo</a>
+                    </footer>
+
+                </article>
 
                 <p class="fuente">
                     Información adaptada de
@@ -121,13 +163,13 @@
                     Esta página es informativa y no sustituye una consulta médica.
                 </p>
 
-            </article>
+            </div>
 
         </main>
 
     </div>
 
-    <script src="menu.js"></script>
+    <script src="menu.js?v=3"></script>
 
 </body>
 

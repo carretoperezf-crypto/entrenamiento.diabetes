@@ -4,24 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#16324F">
+    <meta name="theme-color" content="#0D0F2B">
 
-    <title>Síntomas y causas de la diabetes · Predicción de riesgo</title>
+    <title>Síntomas y causas · Predicción de diabetes</title>
+
+    <link rel="icon" type="image/svg+xml" href="icono.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
 
-    <div class="pagina">
+    <div class="app">
 
-        <header class="cabecera cabecera-info">
+        <!-- ==========================================
+             PANEL DE MARCA Y NAVEGACIÓN
+        =========================================== -->
+        <aside class="panel panel-nav">
 
-            <nav class="menu" aria-label="Secciones informativas">
+            <div class="panel-superior">
+
+                <a class="marca" href="inicio.html" aria-label="Predicción de diabetes, ir al inicio">
+                    <svg class="marca-gota" viewBox="0 0 410 470" aria-hidden="true">
+                        <path class="gota" d="M165 0C110 68 3 200 3 305a162 162 0 0 0 324 0C327 200 220 68 165 0Z"/>
+                        <path class="gota-linea" d="M54 368 113 305 185 335"/>
+                        <circle class="gota-nodo" cx="54" cy="368" r="18"/>
+                        <circle class="gota-nodo" cx="113" cy="305" r="18"/>
+                        <circle class="gota-nodo" cx="185" cy="335" r="18"/>
+                        <g class="gota-senal">
+                            <circle cx="209" cy="305" r="9"/>
+                            <circle cx="234" cy="275" r="9"/>
+                            <circle cx="258" cy="246" r="9"/>
+                            <circle cx="282" cy="217" r="9"/>
+                            <circle cx="307" cy="188" r="9"/>
+                            <circle cx="331" cy="159" r="9"/>
+                            <circle class="gota-halo" cx="357" cy="129" r="49"/>
+                            <circle cx="357" cy="129" r="27"/>
+                        </g>
+                    </svg>
+                    <span class="marca-texto">
+                        <strong>Predicción</strong>
+                        <span>de diabetes</span>
+                    </span>
+                </a>
 
                 <button type="button" class="menu-boton" id="menuBoton"
                     aria-expanded="false" aria-controls="menuPanel" aria-label="Abrir menú">
@@ -32,114 +62,126 @@
                     </span>
                 </button>
 
-                <ul class="menu-panel" id="menuPanel" hidden>
-                    <li><a href="introduccion.html">Introducción</a></li>
-                    <li><a href="sintomas_causas.html" aria-current="page">Síntomas y causas de la diabetes</a></li>
-                    <li><a href="prevencion.html">Prevención y factores de riesgo</a></li>
-                    <li><a href="tratamientos.html">Tratamientos</a></li>
-                    <li class="menu-aparte"><a href="quienes_somos.html">Quiénes somos</a></li>
-                </ul>
+            </div>
 
+            <nav class="menu" aria-label="Secciones">
+                <div class="menu-panel" id="menuPanel" hidden>
+                    <ol class="pasos ruta">
+                        <li class="paso completo"><a href="introduccion.html"><span class="paso-nodo"></span><span class="paso-texto">Introducción</span></a></li>
+                        <li class="paso completo actual"><a href="sintomas_causas.html" aria-current="page"><span class="paso-nodo"></span><span class="paso-texto">Síntomas y causas</span></a></li>
+                        <li class="paso"><a href="prevencion.html"><span class="paso-nodo"></span><span class="paso-texto">Prevención y factores de riesgo</span></a></li>
+                        <li class="paso"><a href="tratamientos.html"><span class="paso-nodo"></span><span class="paso-texto">Tratamientos</span></a></li>
+                        <li class="paso paso-final"><a href="index.html"><span class="paso-nodo"></span><span class="paso-texto">Calcular mi riesgo</span></a></li>
+                    </ol>
+                    <ul class="menu-extra">
+                        <li><a href="inicio.html">Inicio</a></li>
+                        <li><a href="quienes_somos.html">Quiénes somos</a></li>
+                    </ul>
+                </div>
             </nav>
 
-            <a class="enlace-inicio" href="inicio.html">
-                <span aria-hidden="true">←</span> Inicio
-            </a>
-
-            <h1>Síntomas y causas de la diabetes</h1>
-
-            <p class="cabecera-texto">
-                Qué señales puede dar la diabetes tipo 2 y qué la origina.
+            <p class="panel-aviso">
+                La información y la estimación son orientativas y no sustituyen
+                la valoración de un profesional de la salud.
             </p>
 
-        </header>
+        </aside>
 
-        <main class="contenedor">
+        <main class="contenido">
 
-            <article class="articulo">
+            <div class="contenedor">
 
-                <section>
-                    <h2>Síntomas</h2>
-                    <p>
-                        Mucha gente con diabetes tipo 2 no siente nada. Cuando hay síntomas,
-                        aparecen poco a poco, a lo largo de años, y pueden ser tan leves que pasan desapercibidos.
-                    </p>
-                    <ul class="lista-iconos">
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 8.5 7.2 12 3z"/></svg></span>
-                            <span class="texto">Más sed y más ganas de orinar</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3v6a2.5 2.5 0 0 0 5 0V3"/><path d="M8.5 3v18"/><path d="M17 21V3c-2 1.6-3 4.6-3 8.5h3"/></svg></span>
-                            <span class="texto">Más hambre de lo habitual</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="16" height="8" rx="2"/><path d="M21.5 11v2"/><path d="M6.5 11v2"/></svg></span>
-                            <span class="texto">Cansancio</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/></svg></span>
-                            <span class="texto">Visión borrosa</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg></span>
-                            <span class="texto">Hormigueo o adormecimiento en pies o manos</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M10.5 10.5h.01M13.5 13.5h.01M13.5 10.5h.01M10.5 13.5h.01"/></svg></span>
-                            <span class="texto">Heridas o llagas que tardan en sanar</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
-                            <span class="texto">Bajar de peso sin razón aparente</span>
-                        </li>
-                    </ul>
-                    <p class="nota-destacada">
-                        No tener síntomas no descarta la diabetes. Si tienes factores de riesgo,
-                        vale la pena hacerte un análisis de glucosa.
-                    </p>
-                </section>
+                <header class="articulo-cabecera">
+                    <h1>Síntomas y causas de la diabetes</h1>
+                    <p class="articulo-intro">Qué señales puede dar la diabetes tipo 2 y qué la origina.</p>
+                </header>
 
-                <section>
-                    <h2>Causas</h2>
-                    <p>
-                        No hay una sola causa. Suele ser la suma de varios factores:
-                    </p>
-                    <ul class="lista-iconos">
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
-                            <span class="texto">Sobrepeso u obesidad</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
-                            <span class="texto">Poca actividad física</span>
-                        </li>
-                        <li>
-                            <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
-                            <span class="texto">Genética y antecedentes familiares</span>
-                        </li>
-                    </ul>
-                </section>
+                <article class="articulo hoja">
 
-                <section>
-                    <h2>Cómo empieza: la resistencia a la insulina</h2>
-                    <p>
-                        Casi siempre el proceso sigue el mismo orden:
-                    </p>
-                    <ol class="lista-acciones">
-                        <li>Las células dejan de responder a la insulina como deberían.</li>
-                        <li>El cuerpo compensa fabricando más insulina para que la glucosa siga entrando a las células.</li>
-                        <li>Con el tiempo ya no logra producir la suficiente, y la glucosa en la sangre sube.</li>
-                    </ol>
-                </section>
+                    <section>
+                        <h2>Síntomas</h2>
+                        <p>
+                            Mucha gente con diabetes tipo 2 no siente nada. Cuando hay síntomas,
+                            aparecen poco a poco, a lo largo de años, y pueden ser tan leves que pasan desapercibidos.
+                        </p>
+                        <ul class="lista-iconos">
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 8.5 7.2 12 3z"/></svg></span>
+                                <span class="texto">Más sed y más ganas de orinar</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3v6a2.5 2.5 0 0 0 5 0V3"/><path d="M8.5 3v18"/><path d="M17 21V3c-2 1.6-3 4.6-3 8.5h3"/></svg></span>
+                                <span class="texto">Más hambre de lo habitual</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="16" height="8" rx="2"/><path d="M21.5 11v2"/><path d="M6.5 11v2"/></svg></span>
+                                <span class="texto">Cansancio</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/></svg></span>
+                                <span class="texto">Visión borrosa</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg></span>
+                                <span class="texto">Hormigueo o adormecimiento en pies o manos</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M10.5 10.5h.01M13.5 13.5h.01M13.5 10.5h.01M10.5 13.5h.01"/></svg></span>
+                                <span class="texto">Heridas o llagas que tardan en sanar</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
+                                <span class="texto">Bajar de peso sin razón aparente</span>
+                            </li>
+                        </ul>
+                        <p class="nota-destacada">
+                            No tener síntomas no descarta la diabetes. Si tienes factores de riesgo,
+                            vale la pena hacerte un análisis de glucosa.
+                        </p>
+                    </section>
 
-                <footer class="articulo-pie">
-                    <a class="enlace-siguiente" href="prevencion.html">
-                        <small>Siguiente</small>
-                        <span>Prevención y factores de riesgo</span>
-                    </a>
-                    <a class="boton-primario" href="index.html">Calcular mi riesgo</a>
-                </footer>
+                    <section>
+                        <h2>Causas</h2>
+                        <p>
+                            No hay una sola causa. Suele ser la suma de varios factores:
+                        </p>
+                        <ul class="lista-iconos">
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0z"/><path d="M12 11l1.3-2"/></svg></span>
+                                <span class="texto">Sobrepeso u obesidad</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+                                <span class="texto">Poca actividad física</span>
+                            </li>
+                            <li>
+                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
+                                <span class="texto">Genética y antecedentes familiares</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Cómo empieza: la resistencia a la insulina</h2>
+                        <p>
+                            Casi siempre el proceso sigue el mismo orden:
+                        </p>
+                        <ol class="lista-acciones">
+                            <li>Las células dejan de responder a la insulina como deberían.</li>
+                            <li>El cuerpo compensa fabricando más insulina para que la glucosa siga entrando a las células.</li>
+                            <li>Con el tiempo ya no logra producir la suficiente, y la glucosa en la sangre sube.</li>
+                        </ol>
+                    </section>
+
+                    <footer class="articulo-pie">
+                        <a class="enlace-siguiente" href="prevencion.html">
+                            <small>Siguiente</small>
+                            <span>Prevención y factores de riesgo</span>
+                        </a>
+                        <a class="boton-primario" href="index.html">Calcular mi riesgo</a>
+                    </footer>
+
+                </article>
 
                 <p class="fuente">
                     Información adaptada de
@@ -148,13 +190,13 @@
                     Esta página es informativa y no sustituye una consulta médica.
                 </p>
 
-            </article>
+            </div>
 
         </main>
 
     </div>
 
-    <script src="menu.js"></script>
+    <script src="menu.js?v=3"></script>
 
 </body>
 
