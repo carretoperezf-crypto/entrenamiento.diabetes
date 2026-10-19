@@ -34,7 +34,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-tema="claro"]) {
         --azul: #4D6BFF;
         --azul-hover: #6B85FF;
         --coral: #FF6B45;
@@ -60,6 +60,30 @@
     }
 }
 
+:root[data-tema="oscuro"] {
+    --azul: #4D6BFF;
+    --azul-hover: #6B85FF;
+    --coral: #FF6B45;
+
+    --fondo: #090B20;
+    --superficie: #12152F;
+    --relleno: #1B1F42;
+    --linea: #262B55;
+    --linea-fuerte: #3A4073;
+    --texto: #EEF0FF;
+    --texto-2: #A3A8CC;
+    --seleccion: #4D6BFF;
+    --seleccion-texto: #FFFFFF;
+
+    --riesgo-bajo: #2BC596;
+    --riesgo-medio: #F5B02E;
+    --riesgo-alto: #FF6B45;
+
+    --foco: 0 0 0 3px rgba(77, 107, 255, 0.45);
+    --icono: #A9B5FF;
+
+    color-scheme: dark;
+}
 
 *,
 *::before,
@@ -135,6 +159,9 @@ input {
     margin: 0 auto;
 }
 
+
+/* ---------- Marca ---------- */
+
 .panel-superior {
     display: flex;
     align-items: center;
@@ -195,6 +222,9 @@ input {
     color: #FFFFFF;
     border-color: rgba(255, 255, 255, 0.45);
 }
+
+
+/* ---------- Introducción ---------- */
 
 .panel-intro h1 {
     font-size: clamp(30px, 3vw, 40px);
@@ -307,6 +337,7 @@ input {
     animation: senal 1.6s ease-out 1;
 }
 
+/* El punto final toma el color del resultado */
 .pasos[data-resultado] .paso-final { color: #FFFFFF; }
 .pasos[data-resultado="riesgo-bajo"] .paso-final .paso-nodo::before {
     background: #2BC596; box-shadow: 0 0 0 8px rgba(43, 197, 150, 0.28);
@@ -361,6 +392,9 @@ fieldset > legend + * {
     clear: both;
 }
 
+
+/* ---------- Secciones ---------- */
+
 .seccion {
     padding: 32px 0;
     border-bottom: 1px solid var(--linea);
@@ -390,6 +424,9 @@ fieldset > legend + * {
     font-variant-numeric: tabular-nums;
 }
 
+
+/* ---------- Rejillas de campos ---------- */
+
 .campos {
     display: grid;
     gap: 24px;
@@ -405,6 +442,9 @@ fieldset > legend + * {
     gap: 26px;
 }
 
+
+/* ---------- Etiquetas ---------- */
+
 .campo > label,
 .campo-opciones > legend {
     display: block;
@@ -413,6 +453,9 @@ fieldset > legend + * {
     font-weight: 500;
     color: var(--texto);
 }
+
+
+/* ---------- Entradas numéricas ---------- */
 
 .con-unidad {
     position: relative;
@@ -616,6 +659,7 @@ fieldset > legend + * {
 .imc[data-categoria="sobrepeso"] .imc-ayuda { --tono: var(--riesgo-medio); }
 .imc[data-categoria="obesidad"] .imc-ayuda { --tono: var(--riesgo-alto); }
 
+
 .formulario-aviso {
     margin-top: 24px;
     padding: 14px 16px;
@@ -657,7 +701,6 @@ fieldset > legend + * {
     opacity: 0.6;
     cursor: progress;
 }
-
 
 .resultado:empty {
     display: none;
@@ -791,7 +834,6 @@ fieldset > legend + * {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
-
 
 .alarma {
     margin: 0 36px 28px;
@@ -1080,7 +1122,6 @@ fieldset > legend + * {
     color: #FFFFFF;
 }
 
-
 .articulo-cabecera {
     margin-bottom: 28px;
 }
@@ -1132,7 +1173,6 @@ fieldset > legend + * {
     margin-top: 18px;
     font-size: 17px;
 }
-
 
 .lista-iconos {
     list-style: none;
@@ -1320,7 +1360,6 @@ fieldset > legend + * {
 .l-glucosa { background: var(--coral); }
 .leyenda .l-insulina { background: var(--azul); border-radius: 2px; transform: rotate(45deg) scale(0.85); }
 
-
 .articulo-pie {
     display: flex;
     flex-wrap: wrap;
@@ -1493,6 +1532,94 @@ fieldset > legend + * {
     color: var(--texto);
 }
 
+.tema-selector {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.tema-selector legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.tema-opciones {
+    clear: both;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.tema-opciones label {
+    position: relative;
+    flex: 1 1 0;
+    display: flex;
+    cursor: pointer;
+}
+
+.tema-opciones input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.tema-opciones span {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px 7px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: rgba(255, 255, 255, 0.6);
+    transition: background 0.15s, color 0.15s;
+}
+
+.tema-opciones svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tema-opciones label:hover span {
+    color: #FFFFFF;
+}
+
+.tema-opciones input:checked + span {
+    background: rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+}
+
+.tema-opciones input:focus-visible + span {
+    outline: 2px solid #A9B5FF;
+    outline-offset: 1px;
+}
+
+.panel > .tema-selector {
+    margin-top: auto;
+}
+
+.panel > .tema-selector + .panel-aviso {
+    margin-top: 0;
+}
+
 @media (max-width: 960px) {
 
     .app {
@@ -1515,7 +1642,23 @@ fieldset > legend + * {
         display: none;
     }
 
-    
+    .panel > .tema-selector {
+        margin-top: 0;
+    }
+
+    .tema-opciones span {
+        flex-direction: row;
+        justify-content: center;
+        gap: 6px;
+        padding: 9px 4px;
+    }
+
+    .tema-opciones svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Avance en horizontal */
     .avance {
         gap: 10px;
     }
@@ -1559,7 +1702,6 @@ fieldset > legend + * {
     .contenido {
         padding: 20px 16px 64px;
     }
-
     .panel-nav {
         gap: 0;
         padding: 14px 16px;

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0D0F2B">
 
-    <title>Tratamientos · Predicción de diabetes</title>
+    <title>Quiénes somos · Predicción de diabetes</title>
 
     <link rel="icon" type="image/svg+xml" href="icono.svg">
 
@@ -15,7 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=3">
+    <script src="tema.js?v=4"></script>
+
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
@@ -64,16 +66,33 @@
             <nav class="menu" aria-label="Secciones">
                 <div class="menu-panel" id="menuPanel" hidden>
                     <ol class="pasos ruta">
-                        <li class="paso completo"><a href="introduccion.html"><span class="paso-nodo"></span><span class="paso-texto">Introducción</span></a></li>
-                        <li class="paso completo"><a href="sintomas_causas.html"><span class="paso-nodo"></span><span class="paso-texto">Síntomas y causas</span></a></li>
-                        <li class="paso completo"><a href="prevencion.html"><span class="paso-nodo"></span><span class="paso-texto">Prevención y factores de riesgo</span></a></li>
-                        <li class="paso completo actual"><a href="tratamientos.html" aria-current="page"><span class="paso-nodo"></span><span class="paso-texto">Tratamientos</span></a></li>
+                        <li class="paso"><a href="introduccion.html"><span class="paso-nodo"></span><span class="paso-texto">Introducción</span></a></li>
+                        <li class="paso"><a href="sintomas_causas.html"><span class="paso-nodo"></span><span class="paso-texto">Síntomas y causas</span></a></li>
+                        <li class="paso"><a href="prevencion.html"><span class="paso-nodo"></span><span class="paso-texto">Prevención y factores de riesgo</span></a></li>
+                        <li class="paso"><a href="tratamientos.html"><span class="paso-nodo"></span><span class="paso-texto">Tratamientos</span></a></li>
                         <li class="paso paso-final"><a href="index.html"><span class="paso-nodo"></span><span class="paso-texto">Calcular mi riesgo</span></a></li>
                     </ol>
                     <ul class="menu-extra">
                         <li><a href="inicio.html">Inicio</a></li>
-                        <li><a href="quienes_somos.html">Quiénes somos</a></li>
+                        <li><a href="quienes_somos.html" aria-current="page">Quiénes somos</a></li>
                     </ul>
+                    <fieldset class="tema-selector">
+                        <legend>Tema</legend>
+                        <div class="tema-opciones">
+                            <label title="Usa el modo de tu dispositivo">
+                                <input type="radio" name="tema" value="sistema" checked>
+                                <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Predeterminado</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="tema" value="claro">
+                                <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>Claro</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="tema" value="oscuro">
+                                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Oscuro</span>
+                            </label>
+                        </div>
+                    </fieldset>
                 </div>
             </nav>
 
@@ -89,43 +108,29 @@
             <div class="contenedor">
 
                 <header class="articulo-cabecera">
-                    <h1>Tratamientos</h1>
-                    <p class="articulo-intro">Cómo se controla la diabetes tipo 2 una vez diagnosticada.</p>
+                    <h1>Quiénes somos</h1>
+                    <p class="articulo-intro">Sobre esta herramienta y las personas que la desarrollan.</p>
                 </header>
 
                 <article class="articulo hoja">
 
                     <section>
-                        <h2>El objetivo: controlar la glucosa</h2>
+                        <h2>Herramienta</h2>
                         <p>
-                            Tratar la diabetes tipo 2 significa mantener la glucosa en la sangre bajo control.
-                            Muchas personas lo consiguen con hábitos saludables; otras necesitan, además, medicamentos.
+                            Predicción de diabetes es una herramienta de apoyo que estima el riesgo de diabetes tipo 2
+                            a partir de datos personales, medidas corporales, antecedentes familiares y hábitos.
+                        </p>
+                        <p>
+                            El resultado es orientativo y no sustituye una consulta médica.
                         </p>
                     </section>
 
                     <section>
-                        <h2>En qué consiste</h2>
-                        <ul class="lista-iconos una-columna con-detalle">
-                            <li>
-                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8c-2-1.6-6-1-6 4 0 4 2.5 8 4.5 8 .8 0 1-.5 1.5-.5s.7.5 1.5.5c2 0 4.5-4 4.5-8 0-5-4-5.6-6-4z"/><path d="M12 8c0-1.8.8-3.5 2.5-4"/></svg></span>
-                                <span class="texto"><strong>Estilo de vida saludable</strong>Seguir un plan de alimentación sano y hacer actividad física con regularidad. Hay que aprender a equilibrar lo que comes y bebes con el ejercicio y, si los tomas, con los medicamentos.</span>
-                            </li>
-                            <li>
-                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg></span>
-                                <span class="texto"><strong>Medicamentos</strong>Pueden ser pastillas, insulina u otros inyectables. Con los años, algunas personas necesitan más de un tipo.</span>
-                            </li>
-                            <li>
-                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 8.5 7.2 12 3z"/></svg></span>
-                                <span class="texto"><strong>Medir la glucosa</strong>Hay que revisarla con regularidad. Tu médico te dirá cada cuánto.</span>
-                            </li>
-                            <li>
-                                <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
-                                <span class="texto"><strong>Presión y colesterol</strong>Mantenerlos dentro del rango que tu médico fije para ti y hacerte las revisiones periódicas.</span>
-                            </li>
-                        </ul>
-                        <p class="nota-destacada">
-                            El tratamiento lo define un profesional de la salud según cada persona.
-                            No empieces ni suspendas medicamentos por tu cuenta.
+                        <h2>Equipo de trabajo</h2>
+                        <p>
+                            Somos estudiantes de ESIME Zacatenco, del Instituto Politécnico Nacional (IPN), en la Ciudad de México.
+                            Este proyecto forma parte de nuestro trabajo de titulación para ayudar a la población a prevenir
+                            la diabetes tipo 2 y sus complicaciones, con el objetivo de mejorar la calidad de vida de las personas.
                         </p>
                     </section>
 
@@ -139,20 +144,13 @@
 
                 </article>
 
-                <p class="fuente">
-                    Información adaptada de
-                    <a href="https://medlineplus.gov/spanish/diabetestype2.html" target="_blank" rel="noopener">MedlinePlus en español: Diabetes tipo 2</a>
-                    (Biblioteca Nacional de Medicina de EE. UU.), actualizado el 19 de mayo de 2026.
-                    Esta página es informativa y no sustituye una consulta médica.
-                </p>
-
             </div>
 
         </main>
 
     </div>
 
-    <script src="menu.js?v=3"></script>
+    <script src="menu.js?v=4"></script>
 
 </body>
 
