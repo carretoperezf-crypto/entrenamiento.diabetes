@@ -56,8 +56,8 @@ function calcularIMC() {
     const estaturaCm = parseFloat(campoEstatura.value);
 
     const valido =
-        peso > 0 && peso <= 400 &&
-        estaturaCm >= 50 && estaturaCm <= 250;
+        peso > 30 && peso <= 250 &&
+        estaturaCm >= 120 && estaturaCm <= 230;
 
     if (!valido) {
         campoIMC.value = "";
@@ -329,12 +329,10 @@ function mostrarResultado(data, perfil) {
         ["IMC", `${perfil.imc.toFixed(1)} · ${categoriaIMC(perfil.imc)}`]
     ];
 
-    if (typeof data.probabilidad === "number") {
-        const pct = data.probabilidad <= 1
-            ? data.probabilidad * 100
-            : data.probabilidad;
-        datos.push(["Probabilidad estimada", `${pct.toFixed(0)} %`]);
-    }
+    const pct = (data.probabilidades || {})[data.clasificacion];
+     if (typeof pct === "number") {
+      datos.push(["Probabilidad estimada", `${pct.toFixed(0)} %`]);
+      }
 
     if (data.prediccion !== undefined && data.prediccion !== null) {
         datos.push(["Salida del modelo", data.prediccion]);

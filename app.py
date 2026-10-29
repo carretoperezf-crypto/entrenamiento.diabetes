@@ -22,7 +22,52 @@ try:
 except AttributeError:
     app.config["JSON_AS_ASCII"] = False
 
-modelo = joblib.load(os.path.join(BASE_DIR, "modelos", "modelo_xgboost.pkl"))
+paquete = joblib.load(os.path.join(BASE_DIR, "modelos", "modelo_xgboost.pkl"))
+
+modelo = paquete["modelo"]
+COLUMNAS = paquete["columnas"]
+CLASES = paquete["clases"]
+
+print("Modelo cargado. Entrenado el:", paquete.get("fecha"),
+      "| F1 promedio:", round(paquete.get("f1_promedio", 0), 4))
+
+RANGOS = {
+    "edad": (20, 95),          # años
+    "peso": (30, 250),         # kg
+    "estatura": (120, 230)     # cm
+}
+
+CODIGOS_PERMITIDOS = {
+    "sexo": {0, 1},
+    "antecedente diabetes familiar": {0, 1, 2},
+    "antecedente hipertension familiar": {0, 1, 2},
+    "hipertension": {0, 1, 2},
+    "actividad fisica": {0, 1, 2},
+    "tabaquismo": {0, 1, 2}
+}
+
+AVISO = (
+    "Este resultado es una estimación de riesgo, no un diagnóstico. "
+    "Solo un estudio de laboratorio y un médico pueden confirmar si tienes diabetes."
+)
+
+RECOMENDACIONES = {
+    0: "Mantén tus hábitos saludables y revisa tu glucosa en tus chequeos de rutina.",
+    1: "Te recomendamos hacerte un estudio de glucosa en ayunas o de hemoglobina "
+       "glicosilada (HbA1c) y consultar a tu médico.",
+    2: "Te recomendamos acudir pronto con un médico y hacerte un estudio de glucosa "
+       "en ayunas o de hemoglobina glicosilada (HbA1c)."
+}
+
+
+def leer_numero(datos, campo):
+    """Convierte un campo a número o lanza un error claro."""
+    if campo not in datos or datos[campo] in (None, ""):
+        raise ValueError(f"Falta el campo '{campo}'.")
+    try:
+        return float(datos[campo])
+    except (TypeError, ValueError):
+        raise ValueError(f"El campo '{campo}' debe ser un número.")
 
 
 @app.route("/")
@@ -33,34 +78,67 @@ def inicio():
 @app.route("/predict", methods=["POST"])
 def predecir():
     try:
-        datos = request.get_json()
+        datos = request.get_json(silent=True)
+        if not datos:
+            return jsonify({"error": "No se recibieron datos."}), 400
+
+        # Valores numéricos con rango
+        valores = {}
+        for campo, (minimo, maximo) in RANGOS.items():
+            valor = leer_numero(datos, campo)
+            if not (minimo <= valor <= maximo):
+                return jsonify({
+                    "error": f"El valor de '{campo}' debe estar entre {minimo} y {maximo}."
+                }), 400
+            valores[campo] = valor
+
+        # Valores codificados (respuestas de menús)
+        for campo, permitidos in CODIGOS_PERMITIDOS.items():
+            valor = leer_numero(datos, campo)
+            if valor not in permitidos:
+                return jsonify({
+                    "error": f"Valor no válido para '{campo}'. "
+                             f"Opciones permitidas: {sorted(permitidos)}."
+                }), 400
+            valores[campo] = int(valor)
+
+        # El IMC se calcula aquí para que siempre coincida con peso y estatura
+        imc = valores["peso"] / (valores["estatura"] / 100) ** 2
 
         paciente = pd.DataFrame([{
-            "sexo": datos["sexo"],
-            "edad": datos["edad"],
-            "Peso": datos["peso"],
-            "Estatura(cm)": datos["estatura"],
-            "IMC": datos["imc"],
-            "Antecedente diabetes familiar": datos["antecedente diabetes familiar"],
-            "Antecedente hipertension familiar": datos["antecedente hipertension familiar"],
-            "Hipertension": datos["hipertension"],
-            "Actividad fisica": datos["actividad fisica"],
-            "Tabaquismo": datos["tabaquismo"]
-        }])
+            "sexo": valores["sexo"],
+            "edad": valores["edad"],
+            "Peso": valores["peso"],
+            "Estatura(cm)": valores["estatura"],
+            "IMC": imc,
+            "Antecedente diabetes familiar": valores["antecedente diabetes familiar"],
+            "Antecedente hipertension familiar": valores["antecedente hipertension familiar"],
+            "Hipertension": valores["hipertension"],
+            "Actividad fisica": valores["actividad fisica"],
+            "Tabaquismo": valores["tabaquismo"]
+        }])[COLUMNAS]   # mismo orden de columnas que en el entrenamiento
 
-        prediccion = modelo.predict(paciente)[0]
-        if prediccion == 0:
-            diagnostico = "Riesgo bajo"
-        elif prediccion == 1:
-            diagnostico = "Riesgo medio"
-        elif prediccion == 2:
-            diagnostico = "Riesgo alto"
-        else:
-            diagnostico = "Riesgo desconocido"
-        return jsonify({"prediccion": int(prediccion),
-                        "clasificacion": diagnostico})
-    except Exception as e:
+        # Probabilidad de cada nivel de riesgo
+        probabilidades = modelo.predict_proba(paciente)[0]
+        prediccion = int(probabilidades.argmax())
+
+        return jsonify({
+            "prediccion": prediccion,
+            "clasificacion": CLASES.get(prediccion, "Riesgo desconocido"),
+            "probabilidades": {
+                CLASES[i]: round(float(p) * 100, 1)
+                for i, p in enumerate(probabilidades)
+            },
+            "imc": round(imc, 2),
+            "recomendacion": RECOMENDACIONES.get(prediccion, ""),
+            "aviso": AVISO
+        })
+
+    except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "Error al procesar la predicción.",
+                        "detalle": str(e)}), 500
 
 # HOSPITALES CERCANOS
 SERVIDORES_OVERPASS = [
@@ -114,7 +192,6 @@ def hospitales():
 
         limite = max(1, min(limite, 10))
 
-        # OpenStreetMap / Overpass: hospitales en un radio de 10 km.
         consulta = f"""
         [out:json][timeout:15];
         (

@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import Perceptron
@@ -217,6 +218,39 @@ evaluar_modelo("PERCEPTRON",Y_test, pred_perceptron)
 evaluar_modelo("ARBOL DE DECISION", Y_test, pred_arbol)
 evaluar_modelo("RED NEURONAL - RELU + ADAM",Y_test, pred_red_neuronal)
 
+print("\n==========================================")
+print("PROMEDIO DEL DATASET - VALIDACIÓN CRUZADA (5 FOLDS)")
+print("==========================================")
+ 
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+ 
+modelos_promedio = [
+    ("Perceptrón", make_pipeline(StandardScaler(), modelo_perceptron)),
+    ("Árbol de Decisión", modelo_arbol),
+    ("Random Forest", modelo_rf),
+    ("XGBoost", modelo_xgb),
+    ("Red Neuronal", make_pipeline(StandardScaler(), modelo_red_neuronal))
+]
+ 
+promedios = {}
+ 
+for nombre, modelo in modelos_promedio:
+ 
+    puntajes = cross_val_score(
+        modelo,
+        X,
+        Y,
+        cv=cv,
+        scoring="f1_macro"
+    )
+ 
+    promedios[nombre] = puntajes
+ 
+    print("\n" + nombre)
+    print("F1 de cada entrenamiento:", np.round(puntajes, 4))
+    print("F1 promedio:", round(puntajes.mean(), 4), "±", round(puntajes.std(), 4))
+
+ 
 resultados = []
 modelos = [
     ("Perceptrón", pred_perceptron),
