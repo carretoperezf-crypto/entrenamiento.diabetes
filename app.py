@@ -303,6 +303,14 @@ def hospitales():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/sw.js")
+def service_worker():
+    respuesta=app.send_static_file("sw.js")
+    respuesta.headers["Cache-Control"]="no-cache"
+    respuesta.headers["Service-Worker-Allowed"]="/"
+    return respuesta
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    puerto=int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=puerto, debug=False)
+    

@@ -1,0 +1,8 @@
+flask>=2.2
+flask-cors
+pandas
+joblib
+requests
+xgboost
+scikit-learn
+gunicorn
