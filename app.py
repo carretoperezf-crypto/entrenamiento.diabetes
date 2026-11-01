@@ -59,6 +59,17 @@ RECOMENDACIONES = {
        "en ayunas o de hemoglobina glicosilada (HbA1c)."
 }
 
+UMBRALES = paquete.get("umbrales")   # None si no se guardaron
+
+def decidir_riesgo(probabilidades):
+    if not UMBRALES:
+        return int(probabilidades.argmax())
+    p_bajo, p_medio, p_alto = probabilidades
+    if p_alto >= UMBRALES["alto"]:
+        return 2
+    if p_medio + p_alto >= UMBRALES["medio"]:
+        return 1
+    return 0
 
 def leer_numero(datos, campo):
     """Convierte un campo a número o lanza un error claro."""
@@ -120,7 +131,7 @@ def predecir():
 
         # Probabilidad de cada nivel de riesgo
         probabilidades = modelo.predict_proba(paciente)[0]
-        prediccion = int(probabilidades.argmax())
+        prediccion = decidir_riesgo(probabilidades)
 
         return jsonify({
             "prediccion": prediccion,
@@ -313,4 +324,3 @@ def service_worker():
 if __name__ == "__main__":
     puerto=int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=puerto, debug=False)
-    
