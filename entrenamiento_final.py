@@ -53,9 +53,9 @@ for columna in X.columns:
 # ==========================================
 modelo_xgb = XGBClassifier(
     random_state=42,
-    n_estimators=100,
-    learning_rate=0.1,
-    max_depth=5,
+    n_estimators=500,
+    learning_rate=0.03,
+    max_depth=3,
     objective="multi:softprob",
     eval_metric="mlogloss",
     num_class=3
