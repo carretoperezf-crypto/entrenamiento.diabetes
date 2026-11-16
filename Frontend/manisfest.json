@@ -1,7 +1,7 @@
 {
   "name": "Predicción de Riesgo de Diabetes",
-  "short_name": "Riesgo Diabetes",
-  "description": "Prediccion de nivel de riesgo de diabetes y localización de hospitales cercanos en donde te encuentras.",
+  "short_name": "Predicción de diabetes",
+  "description": "Predicción de nivel de riesgo de diabetes y localización de hospitales cercanos en donde te encuentras.",
   "lang": "es-MX",
   "start_url": "/",
   "scope": "/",
