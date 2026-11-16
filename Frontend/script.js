@@ -56,7 +56,7 @@ function calcularIMC() {
     const estaturaCm = parseFloat(campoEstatura.value);
 
     const valido =
-        peso > 30 && peso <= 250 &&
+        peso >= 30 && peso <= 250 &&
         estaturaCm >= 120 && estaturaCm <= 230;
 
     if (!valido) {
@@ -413,6 +413,7 @@ function mostrarResultado(data, perfil) {
     const botonHospitales = document.getElementById("botonHospitales");
     if (botonHospitales) {
         botonHospitales.addEventListener("click", buscarHospitales);
+        precargarHospitales();
     }
 
     desplazarA(resultado);
@@ -420,6 +421,7 @@ function mostrarResultado(data, perfil) {
 }
 
 function reiniciar() {
+    hospitalesPrecargados = null;
     formulario.reset();
     formulario.classList.remove("intentado");
     calcularIMC();
@@ -432,10 +434,15 @@ function reiniciar() {
     window.scrollTo({ top: 0, behavior: reducirMovimiento ? "auto" : "smooth" });
 }
 
+// Resultado precargado (si el permiso de ubicación ya estaba concedido)
+let hospitalesPrecargados = null;
+
+const TIEMPO_MAXIMO_HOSPITALES = 30000; // ms
+
 function obtenerUbicacion() {
     return new Promise((resolve) => {
         if (!("geolocation" in navigator)) {
-            resolve(null);
+            resolve({ error: "no-disponible" });
             return;
         }
         navigator.geolocation.getCurrentPosition(
@@ -443,11 +450,72 @@ function obtenerUbicacion() {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude
             }),
-            (error)=>{console.warn("No se pudo obtener la ubicacion: ",error);
-            resolve(null);},
+            (error) => {
+                console.warn("No se pudo obtener la ubicación:", error);
+                resolve({
+                    error: error.code === error.PERMISSION_DENIED ? "permiso"
+                        : error.code === error.TIMEOUT ? "tiempo"
+                        : "no-disponible"
+                });
+            },
             { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
         );
     });
+}
+
+async function permisoUbicacionConcedido() {
+    try {
+        const estado = await navigator.permissions.query({ name: "geolocation" });
+        return estado.state === "granted";
+    } catch {
+        return false;   // Navegadores sin Permissions API
+    }
+}
+
+async function pedirHospitales(ubicacion) {
+    const params = new URLSearchParams({
+        lat: ubicacion.lat,
+        lng: ubicacion.lng,
+        limite: "5"
+    });
+
+    // Si el servidor no contesta a tiempo, se cancela en lugar de esperar para siempre
+    const control = new AbortController();
+    const reloj = setTimeout(() => control.abort(), TIEMPO_MAXIMO_HOSPITALES);
+
+    try {
+        const respuesta = await fetch(`${API_URL}/hospitales?${params}`, {
+            signal: control.signal
+        });
+
+        let data = {};
+        try {
+            data = await respuesta.json();
+        } catch {
+            // La respuesta no era JSON (por ejemplo, una página de error)
+        }
+
+        if (!respuesta.ok) {
+            throw new Error(data.error || `El servidor respondió con el código ${respuesta.status}.`);
+        }
+
+        return data.hospitales || [];
+    } finally {
+        clearTimeout(reloj);
+    }
+}
+
+// Si la persona ya dio permiso de ubicación antes, se empieza a buscar en
+// segundo plano en cuanto aparece el resultado. Así, al presionar el botón,
+// la lista suele estar lista. No muestra ninguna ventana de permiso.
+async function precargarHospitales() {
+    if (!(await permisoUbicacionConcedido())) return;
+
+    const promesa = obtenerUbicacion().then((ubicacion) =>
+        ubicacion.error ? null : pedirHospitales(ubicacion)
+    );
+    promesa.catch(() => {});   // Si falla, se reintenta al presionar el botón
+    hospitalesPrecargados = promesa;
 }
 
 function hospitalHTML(h) {
@@ -482,6 +550,19 @@ function hospitalHTML(h) {
     `;
 }
 
+const MENSAJES_UBICACION = {
+    "permiso":
+        "Para buscar hospitales cercanos necesitamos acceder a la ubicación " +
+        "de tu dispositivo. Permite el acceso cuando el navegador lo solicite " +
+        "o actívalo en la configuración del sitio.",
+    "tiempo":
+        "Tu dispositivo tardó demasiado en obtener la ubicación. " +
+        "Revisa que la ubicación esté activada e inténtalo de nuevo.",
+    "no-disponible":
+        "No pudimos obtener la ubicación de tu dispositivo. " +
+        "Revisa que la ubicación esté activada e inténtalo de nuevo."
+};
+
 async function buscarHospitales() {
 
     const boton = document.getElementById("botonHospitales");
@@ -492,65 +573,58 @@ async function buscarHospitales() {
     }
 
     boton.disabled = true;
-    boton.textContent = "Obteniendo ubicación…";
     contenedor.innerHTML = "";
 
-    const ubicacion = await obtenerUbicacion();
+    // Si tarda, se avisa que sigue trabajando
+    const avisoEspera = setTimeout(() => {
+        boton.textContent = "Sigue buscando, puede tardar unos segundos…";
+    }, 6000);
 
-    // El usuario no permitió la ubicación
-    if (!ubicacion) {
-
-        contenedor.innerHTML = `
-            <p class="nota">
-                Para buscar hospitales cercanos necesitamos acceder a la
-                ubicación de tu dispositivo.
-                Activa la ubicación y permite el acceso cuando el navegador
-                lo solicite.
-            </p>
-        `;
-
+    const terminar = (textoBoton) => {
+        clearTimeout(avisoEspera);
         boton.disabled = false;
-        boton.textContent = "Intentar nuevamente";
+        boton.textContent = textoBoton;
+    };
 
-        return;
+    let lista = null;
+
+    // 1. Usar la búsqueda precargada, si existe
+    if (hospitalesPrecargados) {
+        boton.textContent = "Buscando hospitales…";
+        try {
+            lista = await hospitalesPrecargados;
+        } catch {
+            lista = null;
+        }
+        hospitalesPrecargados = null;
     }
 
-    boton.textContent = "Buscando hospitales…";
-
-    const params = new URLSearchParams({
-        lat: ubicacion.lat,
-        lng: ubicacion.lng,
-        limite: "5"
-    });
-
     try {
+        // 2. Si no había precarga (o falló), buscar ahora
+        if (!lista) {
+            boton.textContent = "Obteniendo ubicación…";
+            const ubicacion = await obtenerUbicacion();
 
-        const respuesta = await fetch(
-            `${API_URL}/hospitales?${params}`
-        );
+            if (ubicacion.error) {
+                contenedor.innerHTML = `
+                    <p class="nota">${esc(MENSAJES_UBICACION[ubicacion.error])}</p>
+                `;
+                terminar("Intentar nuevamente");
+                return;
+            }
 
-        const data = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                data.error || "No se pudo obtener la lista."
-            );
+            boton.textContent = "Buscando hospitales…";
+            lista = await pedirHospitales(ubicacion);
         }
 
-        const lista = data.hospitales || [];
-
         if (lista.length === 0) {
-
             contenedor.innerHTML = `
                 <p class="nota">
                     No encontramos hospitales registrados cerca de tu
                     ubicación.
                 </p>
             `;
-
-            boton.disabled = false;
-            boton.textContent = "Buscar nuevamente";
-
+            terminar("Buscar nuevamente");
             return;
         }
 
@@ -565,24 +639,23 @@ async function buscarHospitales() {
             </p>
         `;
 
+        clearTimeout(avisoEspera);
         boton.hidden = true;
 
     } catch (error) {
 
-        console.error(
-            "Error al buscar hospitales:",
-            error
-        );
+        console.error("Error al buscar hospitales:", error);
 
+        const tardo = error.name === "AbortError";
         contenedor.innerHTML = `
             <p class="nota">
-                No se pudo cargar la lista de hospitales.
-                Verifica que Flask esté en ejecución e inténtalo de nuevo.
+                ${tardo
+                    ? "La búsqueda de hospitales tardó demasiado."
+                    : "No se pudo cargar la lista de hospitales."}
+                Revisa tu conexión a internet e inténtalo de nuevo.
             </p>
         `;
-
-        boton.disabled = false;
-        boton.textContent = "Reintentar";
+        terminar("Reintentar");
     }
 }
 
@@ -613,7 +686,7 @@ formulario.addEventListener("submit", async function (event) {
 
     if (imcCalculado === null) {
         avisoFormulario.textContent =
-            "Revisa el peso y la estatura (entre 50 y 250 cm) para calcular el IMC.";
+            "Revisa el peso (entre 30 y 250 kg) y la estatura (entre 120 y 230 cm) para calcular el IMC.";
         avisoFormulario.hidden = false;
         campoEstatura.focus();
         return;
