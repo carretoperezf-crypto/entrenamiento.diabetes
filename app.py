@@ -5,6 +5,8 @@ import joblib
 import requests
 import math
 import os
+import time
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -163,6 +165,108 @@ ENCABEZADOS_OVERPASS = {
     "User-Agent": "PrediccionDiabetesMX/1.0 (proyecto escolar)",
 }
 
+# Una sola sesión reutiliza las conexiones HTTPS (evita repetir el "saludo" TLS)
+sesion_overpass = requests.Session()
+sesion_overpass.headers.update(ENCABEZADOS_OVERPASS)
+
+ejecutor_overpass = ThreadPoolExecutor(max_workers=8)
+
+# Si un servidor no contesta en este tiempo, se pregunta también al siguiente
+SEGUNDOS_ANTES_DEL_SIGUIENTE = 3
+# Tiempo máximo total esperando a Overpass
+SEGUNDOS_MAXIMOS = 25
+
+# Se empieza por el último servidor que respondió bien
+servidor_preferido = SERVIDORES_OVERPASS[0]
+
+# Caché: guarda la respuesta por zona (~1 km) durante 1 hora
+CACHE_HOSPITALES = {}
+CACHE_SEGUNDOS = 60 * 60
+CACHE_MAXIMO = 500
+
+
+def pedir_a_servidor(servidor, consulta):
+    respuesta = sesion_overpass.post(
+        servidor,
+        data={"data": consulta},
+        timeout=(4, 15)   # 4 s para conectar, 15 s para recibir
+    )
+    respuesta.raise_for_status()
+    return servidor, respuesta.json()
+
+
+def consultar_overpass(consulta):
+    """
+    Pregunta primero al servidor que funcionó la última vez. Si tarda más de
+    unos segundos o falla, lanza también el siguiente y usa la primera
+    respuesta correcta que llegue.
+    """
+    global servidor_preferido
+
+    orden = [servidor_preferido] + [
+        s for s in SERVIDORES_OVERPASS if s != servidor_preferido
+    ]
+    limite = time.monotonic() + SEGUNDOS_MAXIMOS
+    pendientes = set()
+    errores = []
+
+    def revisar(terminadas):
+        global servidor_preferido
+        for tarea in terminadas:
+            try:
+                servidor, datos = tarea.result()
+                print(f"Overpass OK: {servidor}")
+                servidor_preferido = servidor
+                return datos
+            except (requests.RequestException, ValueError) as e:
+                errores.append(str(e))
+                print(f"Overpass falló: {e}")
+        return None
+
+    for servidor in orden:
+        pendientes.add(ejecutor_overpass.submit(pedir_a_servidor, servidor, consulta))
+        terminadas, pendientes = wait(
+            pendientes, timeout=SEGUNDOS_ANTES_DEL_SIGUIENTE,
+            return_when=FIRST_COMPLETED
+        )
+        datos = revisar(terminadas)
+        if datos is not None:
+            return datos
+
+    # Ya se lanzaron todos: esperar al primero que conteste
+    while pendientes and time.monotonic() < limite:
+        terminadas, pendientes = wait(
+            pendientes, timeout=limite - time.monotonic(),
+            return_when=FIRST_COMPLETED
+        )
+        datos = revisar(terminadas)
+        if datos is not None:
+            return datos
+
+    raise requests.RequestException(
+        " | ".join(errores) or "Ningún servidor respondió a tiempo."
+    )
+
+
+def hospitales_de_la_zona(lat, lng):
+    """Devuelve la respuesta de Overpass, usando la caché si es reciente."""
+    clave = (round(lat, 2), round(lng, 2))
+    guardado = CACHE_HOSPITALES.get(clave)
+    if guardado and time.time() - guardado[0] < CACHE_SEGUNDOS:
+        return guardado[1]
+
+    consulta = f"""
+    [out:json][timeout:12];
+    nwr["amenity"="hospital"]["name"](around:10000,{lat},{lng});
+    out center tags qt;
+    """
+    datos = consultar_overpass(consulta)
+
+    if len(CACHE_HOSPITALES) >= CACHE_MAXIMO:
+        CACHE_HOSPITALES.clear()
+    CACHE_HOSPITALES[clave] = (time.time(), datos)
+    return datos
+
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
     """Calcula la distancia aproximada en km usando Haversine."""
@@ -203,37 +307,7 @@ def hospitales():
 
         limite = max(1, min(limite, 10))
 
-        consulta = f"""
-        [out:json][timeout:15];
-        (
-          node["amenity"="hospital"](around:10000,{lat},{lng});
-          way["amenity"="hospital"](around:10000,{lat},{lng});
-          relation["amenity"="hospital"](around:10000,{lat},{lng});
-        );
-        out center tags;
-        """
-
-        datos = None
-        errores = []
-
-        for servidor in SERVIDORES_OVERPASS:
-            try:
-                respuesta = requests.post(
-                    servidor,
-                    data={"data": consulta},
-                    headers=ENCABEZADOS_OVERPASS,
-                    timeout=20
-                )
-                respuesta.raise_for_status()
-                datos = respuesta.json()
-                print(f"Overpass OK: {servidor}")
-                break
-            except (requests.RequestException, ValueError) as e:
-                errores.append(f"{servidor} -> {e}")
-                print(f"Overpass falló: {servidor} -> {e}")
-
-        if datos is None:
-            raise requests.RequestException(" | ".join(errores))
+        datos = hospitales_de_la_zona(lat, lng)
 
         hospitales_encontrados = []
 
