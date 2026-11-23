@@ -2,12 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import joblib
-import requests
 import math
 import os
 import json
-import time
-from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -155,156 +152,9 @@ def predecir():
                         "detalle": str(e)}), 500
 
 # HOSPITALES CERCANOS
-SERVIDORES_OVERPASS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-    "https://overpass.private.coffee/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
-]
-
-ENCABEZADOS_OVERPASS = {
-    "User-Agent": "PrediccionDiabetesMX/1.0 (proyecto escolar)",
-}
-
-# Una sola sesión reutiliza las conexiones HTTPS (evita repetir el "saludo" TLS)
-sesion_overpass = requests.Session()
-sesion_overpass.headers.update(ENCABEZADOS_OVERPASS)
-
-ejecutor_overpass = ThreadPoolExecutor(max_workers=8)
-
-# Si un servidor no contesta en este tiempo, se pregunta también al siguiente
-SEGUNDOS_ANTES_DEL_SIGUIENTE = 3
-# Tiempo máximo total esperando a Overpass
-SEGUNDOS_MAXIMOS = 25
-
-# Se empieza por el último servidor que respondió bien
-servidor_preferido = SERVIDORES_OVERPASS[0]
-
-# Caché: guarda la respuesta por zona (~1 km) durante 1 hora
-CACHE_HOSPITALES = {}
-CACHE_SEGUNDOS = 60 * 60
-CACHE_MAXIMO = 500
-
-
-def pedir_a_servidor(servidor, consulta):
-    respuesta = sesion_overpass.post(
-        servidor,
-        data={"data": consulta},
-        timeout=(4, 15)   # 4 s para conectar, 15 s para recibir
-    )
-    respuesta.raise_for_status()
-    return servidor, respuesta.json()
-
-
-def consultar_overpass(consulta):
-    """
-    Pregunta primero al servidor que funcionó la última vez. Si tarda más de
-    unos segundos o falla, lanza también el siguiente y usa la primera
-    respuesta correcta que llegue.
-    """
-    global servidor_preferido
-
-    orden = [servidor_preferido] + [
-        s for s in SERVIDORES_OVERPASS if s != servidor_preferido
-    ]
-    limite = time.monotonic() + SEGUNDOS_MAXIMOS
-    pendientes = set()
-    errores = []
-
-    def revisar(terminadas):
-        global servidor_preferido
-        for tarea in terminadas:
-            try:
-                servidor, datos = tarea.result()
-                print(f"Overpass OK: {servidor}")
-                servidor_preferido = servidor
-                return datos
-            except (requests.RequestException, ValueError) as e:
-                errores.append(str(e))
-                print(f"Overpass falló: {e}")
-        return None
-
-    for servidor in orden:
-        pendientes.add(ejecutor_overpass.submit(pedir_a_servidor, servidor, consulta))
-        terminadas, pendientes = wait(
-            pendientes, timeout=SEGUNDOS_ANTES_DEL_SIGUIENTE,
-            return_when=FIRST_COMPLETED
-        )
-        datos = revisar(terminadas)
-        if datos is not None:
-            return datos
-
-    # Ya se lanzaron todos: esperar al primero que conteste
-    while pendientes and time.monotonic() < limite:
-        terminadas, pendientes = wait(
-            pendientes, timeout=limite - time.monotonic(),
-            return_when=FIRST_COMPLETED
-        )
-        datos = revisar(terminadas)
-        if datos is not None:
-            return datos
-
-    raise requests.RequestException(
-        " | ".join(errores) or "Ningún servidor respondió a tiempo."
-    )
-
-
-def hospitales_de_la_zona(lat, lng):
-    """Devuelve la respuesta de Overpass, usando la caché si es reciente."""
-    clave = (round(lat, 2), round(lng, 2))
-    guardado = CACHE_HOSPITALES.get(clave)
-    if guardado and time.time() - guardado[0] < CACHE_SEGUNDOS:
-        return guardado[1]
-
-    consulta = f"""
-    [out:json][timeout:12];
-    nwr["amenity"="hospital"]["name"](around:10000,{lat},{lng});
-    out center tags qt;
-    """
-    datos = consultar_overpass(consulta)
-
-    if len(CACHE_HOSPITALES) >= CACHE_MAXIMO:
-        CACHE_HOSPITALES.clear()
-    CACHE_HOSPITALES[clave] = (time.time(), datos)
-    return datos
-
-
-def elemento_a_hospital(elemento):
-    """Convierte un elemento de Overpass al formato que usa la app."""
-    tags = elemento.get("tags", {})
-    nombre = (tags.get("name") or "").strip()
-    if not nombre:
-        return None
-
-    if elemento.get("type") == "node":
-        lat_hospital, lng_hospital = elemento.get("lat"), elemento.get("lon")
-    else:
-        centro = elemento.get("center", {})
-        lat_hospital, lng_hospital = centro.get("lat"), centro.get("lon")
-    if lat_hospital is None or lng_hospital is None:
-        return None
-
-    calle = tags.get("addr:street")
-    numero = tags.get("addr:housenumber")
-    colonia = tags.get("addr:suburb")
-    partes_direccion = []
-    if calle:
-        partes_direccion.append(calle + (f" #{numero}" if numero else ""))
-    if colonia:
-        partes_direccion.append(colonia)
-
-    return {
-        "nombre": nombre,
-        "institucion": tags.get("operator") or "Hospital",
-        "direccion": ", ".join(partes_direccion) or "Dirección no disponible",
-        "telefono": tags.get("phone") or tags.get("contact:phone"),
-        "latitud": lat_hospital,
-        "longitud": lng_hospital,
-    }
-
-
-# Lista de hospitales guardada en el proyecto (se genera con descargar_hospitales.py).
-# Con ella la búsqueda es instantánea y no depende de servidores externos.
+# Lista de hospitales guardada en el proyecto. Se genera en la computadora con
+# descargar_hospitales.py (a partir del mapa de Geofabrik) y se sube al repositorio.
+# Así la búsqueda es instantánea y no depende de servidores externos.
 RUTA_HOSPITALES_LOCALES = os.path.join(BASE_DIR, "datos", "hospitales_mx.json")
 # Se busca primero cerca; si hay pocos resultados (zonas rurales), se amplía
 RADIOS_BUSQUEDA_KM = (10, 30, 60)
@@ -317,7 +167,8 @@ def cargar_hospitales_locales():
         print(f"Hospitales locales cargados: {len(lista)}")
         return lista
     except FileNotFoundError:
-        print("No hay archivo de hospitales locales; se usará Overpass.")
+        print("AVISO: no se encontró datos/hospitales_mx.json; "
+              "la búsqueda de hospitales no funcionará.")
     except (OSError, ValueError) as e:
         print(f"No se pudo leer el archivo de hospitales locales: {e}")
     return []
@@ -365,10 +216,12 @@ def hospitales():
 
         limite = max(1, min(limite, 10))
 
-        hospitales_encontrados = []
-        fuente = "local"
+        if not HOSPITALES_LOCALES:
+            return jsonify({
+                "error": "La lista de hospitales no está disponible."
+            }), 503
 
-        # 1. Buscar en la lista guardada en el proyecto
+        # 1. Buscar cerca y ampliar el radio si hay pocos resultados
         radio_maximo = RADIOS_BUSQUEDA_KM[-1]
         margen = radio_maximo / 111 + 0.01   # grados aprox., filtro rápido
         candidatos = []
@@ -381,6 +234,7 @@ def hospitales():
             if distancia <= radio_maximo:
                 candidatos.append({**hospital, "distancia_km": distancia})
 
+        hospitales_encontrados = []
         for radio in RADIOS_BUSQUEDA_KM:
             hospitales_encontrados = [
                 h for h in candidatos if h["distancia_km"] <= radio
@@ -388,18 +242,13 @@ def hospitales():
             if len(hospitales_encontrados) >= limite:
                 break
 
-        # 2. Si no hay nada cerca (o no existe el archivo), preguntar a Overpass
+        # 2. Si no hay nada en 60 km, mostrar los más cercanos de toda la lista
         if not hospitales_encontrados:
-            fuente = "overpass"
-            datos = hospitales_de_la_zona(lat, lng)
-            for elemento in datos.get("elements", []):
-                hospital = elemento_a_hospital(elemento)
-                if not hospital:
-                    continue
-                distancia = calcular_distancia(
-                    lat, lng, hospital["latitud"], hospital["longitud"]
-                )
-                hospitales_encontrados.append({**hospital, "distancia_km": distancia})
+            hospitales_encontrados = [
+                {**h, "distancia_km": calcular_distancia(
+                    lat, lng, h["latitud"], h["longitud"])}
+                for h in HOSPITALES_LOCALES
+            ]
 
         hospitales_encontrados.sort(key=lambda x: x["distancia_km"])
 
@@ -419,16 +268,8 @@ def hospitales():
 
         return jsonify({
             "hospitales": hospitales_finales,
-            "ubicacion": {"lat": lat, "lng": lng},
-            "fuente": fuente
+            "ubicacion": {"lat": lat, "lng": lng}
         })
-
-    except requests.RequestException as e:
-        print(f"Error al consultar hospitales: {e}")
-        return jsonify({
-            "error": "No se pudo consultar el servicio de hospitales.",
-            "detalle": str(e)
-        }), 502
 
     except Exception as e:
         print(f"Error inesperado en /hospitales: {e!r}")
