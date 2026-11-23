@@ -5,6 +5,7 @@ import joblib
 import requests
 import math
 import os
+import json
 import time
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 
@@ -268,6 +269,63 @@ def hospitales_de_la_zona(lat, lng):
     return datos
 
 
+def elemento_a_hospital(elemento):
+    """Convierte un elemento de Overpass al formato que usa la app."""
+    tags = elemento.get("tags", {})
+    nombre = (tags.get("name") or "").strip()
+    if not nombre:
+        return None
+
+    if elemento.get("type") == "node":
+        lat_hospital, lng_hospital = elemento.get("lat"), elemento.get("lon")
+    else:
+        centro = elemento.get("center", {})
+        lat_hospital, lng_hospital = centro.get("lat"), centro.get("lon")
+    if lat_hospital is None or lng_hospital is None:
+        return None
+
+    calle = tags.get("addr:street")
+    numero = tags.get("addr:housenumber")
+    colonia = tags.get("addr:suburb")
+    partes_direccion = []
+    if calle:
+        partes_direccion.append(calle + (f" #{numero}" if numero else ""))
+    if colonia:
+        partes_direccion.append(colonia)
+
+    return {
+        "nombre": nombre,
+        "institucion": tags.get("operator") or "Hospital",
+        "direccion": ", ".join(partes_direccion) or "Dirección no disponible",
+        "telefono": tags.get("phone") or tags.get("contact:phone"),
+        "latitud": lat_hospital,
+        "longitud": lng_hospital,
+    }
+
+
+# Lista de hospitales guardada en el proyecto (se genera con descargar_hospitales.py).
+# Con ella la búsqueda es instantánea y no depende de servidores externos.
+RUTA_HOSPITALES_LOCALES = os.path.join(BASE_DIR, "datos", "hospitales_mx.json")
+# Se busca primero cerca; si hay pocos resultados (zonas rurales), se amplía
+RADIOS_BUSQUEDA_KM = (10, 30, 60)
+
+
+def cargar_hospitales_locales():
+    try:
+        with open(RUTA_HOSPITALES_LOCALES, encoding="utf-8") as archivo:
+            lista = json.load(archivo)
+        print(f"Hospitales locales cargados: {len(lista)}")
+        return lista
+    except FileNotFoundError:
+        print("No hay archivo de hospitales locales; se usará Overpass.")
+    except (OSError, ValueError) as e:
+        print(f"No se pudo leer el archivo de hospitales locales: {e}")
+    return []
+
+
+HOSPITALES_LOCALES = cargar_hospitales_locales()
+
+
 def calcular_distancia(lat1, lon1, lat2, lon2):
     """Calcula la distancia aproximada en km usando Haversine."""
     R = 6371.0
@@ -307,56 +365,41 @@ def hospitales():
 
         limite = max(1, min(limite, 10))
 
-        datos = hospitales_de_la_zona(lat, lng)
-
         hospitales_encontrados = []
+        fuente = "local"
 
-        for elemento in datos.get("elements", []):
-            tags = elemento.get("tags", {})
-            nombre = tags.get("name")
-
-            if not nombre:
+        # 1. Buscar en la lista guardada en el proyecto
+        radio_maximo = RADIOS_BUSQUEDA_KM[-1]
+        margen = radio_maximo / 111 + 0.01   # grados aprox., filtro rápido
+        candidatos = []
+        for hospital in HOSPITALES_LOCALES:
+            if abs(hospital["latitud"] - lat) > margen:
                 continue
-
-            if elemento.get("type") == "node":
-                lat_hospital = elemento.get("lat")
-                lng_hospital = elemento.get("lon")
-            else:
-                centro = elemento.get("center", {})
-                lat_hospital = centro.get("lat")
-                lng_hospital = centro.get("lon")
-
-            if lat_hospital is None or lng_hospital is None:
-                continue
-
             distancia = calcular_distancia(
-                lat, lng, lat_hospital, lng_hospital
+                lat, lng, hospital["latitud"], hospital["longitud"]
             )
+            if distancia <= radio_maximo:
+                candidatos.append({**hospital, "distancia_km": distancia})
 
-            calle = tags.get("addr:street")
-            numero = tags.get("addr:housenumber")
-            colonia = tags.get("addr:suburb")
+        for radio in RADIOS_BUSQUEDA_KM:
+            hospitales_encontrados = [
+                h for h in candidatos if h["distancia_km"] <= radio
+            ]
+            if len(hospitales_encontrados) >= limite:
+                break
 
-            partes_direccion = []
-            if calle:
-                partes_direccion.append(calle + (f" #{numero}" if numero else ""))
-            if colonia:
-                partes_direccion.append(colonia)
-
-            direccion = ", ".join(partes_direccion) or "Dirección no disponible"
-
-            telefono = tags.get("phone") or tags.get("contact:phone")
-            institucion = tags.get("operator") or "Hospital"
-
-            hospitales_encontrados.append({
-                "nombre": nombre,
-                "institucion": institucion,
-                "direccion": direccion,
-                "telefono": telefono,
-                "latitud": lat_hospital,
-                "longitud": lng_hospital,
-                "distancia_km": distancia
-            })
+        # 2. Si no hay nada cerca (o no existe el archivo), preguntar a Overpass
+        if not hospitales_encontrados:
+            fuente = "overpass"
+            datos = hospitales_de_la_zona(lat, lng)
+            for elemento in datos.get("elements", []):
+                hospital = elemento_a_hospital(elemento)
+                if not hospital:
+                    continue
+                distancia = calcular_distancia(
+                    lat, lng, hospital["latitud"], hospital["longitud"]
+                )
+                hospitales_encontrados.append({**hospital, "distancia_km": distancia})
 
         hospitales_encontrados.sort(key=lambda x: x["distancia_km"])
 
@@ -376,16 +419,19 @@ def hospitales():
 
         return jsonify({
             "hospitales": hospitales_finales,
-            "ubicacion": {"lat": lat, "lng": lng}
+            "ubicacion": {"lat": lat, "lng": lng},
+            "fuente": fuente
         })
 
     except requests.RequestException as e:
+        print(f"Error al consultar hospitales: {e}")
         return jsonify({
             "error": "No se pudo consultar el servicio de hospitales.",
             "detalle": str(e)
         }), 502
 
     except Exception as e:
+        print(f"Error inesperado en /hospitales: {e!r}")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/sw.js")
